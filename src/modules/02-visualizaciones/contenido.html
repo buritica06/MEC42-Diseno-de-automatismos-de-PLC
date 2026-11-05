@@ -1,0 +1,73 @@
+<p>
+  En este capítulo interactuarás con el <strong>gemelo digital tridimensional</strong> de la célula de mecanizado y con
+  sus diagramas de sincronismo espacio-fase y tiempo. Antes de cablear el banco electroneumático, utiliza cada
+  visualización para comprobar el estado de los sensores magnéticos Reed (\(a_0, a_1, b_0, b_1\)), las bobinas de las
+  electroválvulas (\(Y_A, Y_{B+}, Y_{B-}\)) y el contactor de potencia \(KM_1\).
+</p>
+
+<h2 id="gemelo-3d">1. Gemelo Digital 3D: Cilindros A y B y Motor Trifásico M1</h2>
+<p>
+  En la escena 3D observa la disposición ortogonal de los tres actuadores sobre la cuna de mecanizado: en el
+  <strong>eje X (izquierda)</strong> se ubica el <strong>Cilindro A monoestable</strong> con su muelle helicoidal de
+  retorno visible sobre el vástago; en el <strong>eje Y (frente)</strong> actúa el <strong>Cilindro B biestable</strong>
+  de doble solenoide con la mordaza de sujeción; y en el <strong>eje Z (columna superior)</strong> desciende y gira en
+  sentido horario (hacia la derecha, CW) el <strong>Husillo Trifásico \(M_1\)</strong> durante la Etapa 6.
+</p>
+
+<div data-viz="celulaMecanizado3D" data-preset="celula3d"></div>
+
+<div class="callout callout--thm" role="note">
+  <span class="callout__title">Experimentos guiados en la escena 3D</span>
+  <ul>
+    <li>
+      <strong>Experimento 1 — Verificación del pulso Homing \(B-\) (Etapa 3):</strong> Cambia el control
+      <em>Modo de operación</em> a <code>Inspección manual por etapa</code> y mueve el deslizador de
+      <code>Etapa manual</code> desde <code>0</code> hasta <code>6</code>. Detente en la <strong>Etapa 3</strong>:
+      comprueba que el cilindro \(B\) ya estaba retraído (\(0\text{ mm}\), sensor \(b_0 = 1\)), pero el LED de la
+      bobina \(Y_{B-}\) se enciende para enclavar mecánicamente la válvula biestable antes del segundo avance de \(A\).
+    </li>
+    <li>
+      <strong>Experimento 2 — Corte de energía de \(24\text{ VDC}\) en pleno mecanizado:</strong> Coloca la etapa
+      manual en <code>6</code> (con \(A\) en \(100\text{ mm}\), \(B\) en \(50\text{ mm}\) y el motor \(M_1\) girando a
+      la derecha) y activa la casilla <code>Simular corte 24 VDC</code> en la carpeta <em>Seguridad y fallos</em>.
+      Observa cómo el <strong>Cilindro A monoestable</strong> se retrae de inmediato a \(0\text{ mm}\) empujado por su
+      resorte, mientras que el <strong>Cilindro B biestable</strong> mantiene la pieza prensada en \(50\text{ mm}\)
+      (\(b_1 = 1\)), evitando que salga proyectada mientras el husillo pierde inercia.
+    </li>
+    <li>
+      <strong>Experimento 3 — Disparo del relé térmico \(\text{RT1}\) (95-96):</strong> Desactiva el corte de
+      \(24\text{ VDC}\) y activa <code>Disparo térmico RT1 (95-96)</code>. Verifica cómo el contactor \(KM_1\) se
+      desenergiza instantáneamente y el indicador de estado pasa a condición de alarma.
+    </li>
+  </ul>
+</div>
+
+<h2 id="diagrama-fases">2. Diagrama Espacio-Fase y Sincronismo Temporal (2D)</h2>
+<p>
+  El diagrama espacio-fase permite auditar de un vistazo las pendientes de avance y retroceso de cada cilindro y los
+  instantes exactos en que el PLC conmuta las salidas digitales. Alterna el eje horizontal entre el
+  <strong>índice de fase GRAFCET</strong> y el <strong>tiempo real acumulado en segundos</strong>:
+</p>
+
+<div data-viz="diagramaFasesPlc" data-preset="fasesPlc"></div>
+
+<ul>
+  <li>
+    <strong>Experimento guiado A:</strong> Cambia el <em>Eje horizontal</em> a <code>Tiempo real de ciclo (s)</code> y
+    reduce la <em>Presión de línea</em> de \(6.0\text{ bar}\) a \(4.0\text{ bar}\). Observa cómo se alargan las rampas
+    neumáticas de las etapas 1, 2, 4 y 5, incrementando el tiempo total de ciclo \(T_{\text{ciclo}}\).
+  </li>
+  <li>
+    <strong>Experimento guiado B:</strong> Ajusta el <em>Temporizador TON M1</em> entre \(2.0\text{ s}\) y
+    \(10.0\text{ s}\) y verifica en la tabla de datos adjunta cómo el cilindro \(A\) (\(100\text{ mm}\)) y el cilindro
+    \(B\) (\(50\text{ mm}\)) permanecen enclavados durante toda la ventana de giro horario de \(KM_1\).
+  </li>
+</ul>
+
+<h2 id="comparativa-tiempos">3. Distribución de Tiempos por Fase Operativa</h2>
+<p>
+  Compara la participación porcentual y absoluta de cada etapa dentro del ciclo productivo cuando la red de aire
+  comprimido opera a presión nominal (\(6\text{ bar}\)) frente a una condición de caída de presión (\(4\text{ bar}\)):
+</p>
+
+<div data-viz="graficaDatos" data-preset="tiemposFases"></div>

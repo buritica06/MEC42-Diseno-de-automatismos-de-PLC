@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 390" role="img" aria-label="Diagrama GRAFCET normalizado IEC 60848 de la célula de mecanizado: Etapas 0 a 6 con secuencia A+, A-, B-, A+, B+ y giro derecho del motor M1">
+  <rect x="2" y="2" width="876" height="386" rx="12" fill="#f8fafc" stroke="#00628a" stroke-width="2"/>
+  <text x="440" y="30" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="700" fill="#0f172a">
+    GRAFCET Normalizado IEC 60848 — Célula de Mecanizado (A+ → A- → B- → A+ → B+ → Motor M1)
+  </text>
+
+  <!-- Flujo horizontal en 2 filas para máxima legibilidad en escritorio y móvil -->
+  <!-- Etapa 0 (Inicial doble recuadro) -->
+  <rect x="44" y="66" width="56" height="44" fill="#e0f2fe" stroke="#00628a" stroke-width="2.5"/>
+  <rect x="49" y="71" width="46" height="34" fill="none" stroke="#00628a" stroke-width="1.5"/>
+  <text x="72" y="93" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#0f172a">0</text>
+  <text x="72" y="128" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#334155">Reposo</text>
+
+  <!-- Transición T0-1 -->
+  <line x1="100" y1="88" x2="178" y2="88" stroke="#0f172a" stroke-width="2"/>
+  <line x1="139" y1="76" x2="139" y2="100" stroke="#00628a" stroke-width="3"/>
+  <text x="139" y="68" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="#00628a">S1·S0·RT1·a0·b0</text>
+
+  <!-- Etapa 1: A+ -->
+  <rect x="178" y="66" width="56" height="44" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <text x="206" y="93" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#0f172a">1</text>
+  <rect x="150" y="118" width="112" height="34" rx="4" fill="#f1f5f9" stroke="#475569" stroke-width="1.5"/>
+  <text x="206" y="139" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#0f172a">YA := 1 (A+)</text>
+
+  <!-- Transición T1-2 -->
+  <line x1="234" y1="88" x2="312" y2="88" stroke="#0f172a" stroke-width="2"/>
+  <line x1="273" y1="76" x2="273" y2="100" stroke="#00628a" stroke-width="3"/>
+  <text x="273" y="68" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#00628a">a1 = 1</text>
+
+  <!-- Etapa 2: A- -->
+  <rect x="312" y="66" width="56" height="44" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <text x="340" y="93" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#0f172a">2</text>
+  <rect x="284" y="118" width="112" height="34" rx="4" fill="#f1f5f9" stroke="#475569" stroke-width="1.5"/>
+  <text x="340" y="139" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#0f172a">YA := 0 (A-)</text>
+
+  <!-- Transición T2-3 -->
+  <line x1="368" y1="88" x2="446" y2="88" stroke="#0f172a" stroke-width="2"/>
+  <line x1="407" y1="76" x2="407" y2="100" stroke="#00628a" stroke-width="3"/>
+  <text x="407" y="68" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#00628a">a0 = 1</text>
+
+  <!-- Etapa 3: B- Homing -->
+  <rect x="446" y="66" width="56" height="44" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <text x="474" y="93" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#0f172a">3</text>
+  <rect x="414" y="118" width="120" height="34" rx="4" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+  <text x="474" y="139" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#78350f">YB- := 1 (B-)</text>
+
+  <!-- Transición T3-4 -->
+  <line x1="502" y1="88" x2="580" y2="88" stroke="#0f172a" stroke-width="2"/>
+  <line x1="541" y1="76" x2="541" y2="100" stroke="#00628a" stroke-width="3"/>
+  <text x="541" y="68" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="#00628a">b0 · T1 (0.5 s)</text>
+
+  <!-- Etapa 4: A+ (2a vez) -->
+  <rect x="580" y="66" width="56" height="44" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <text x="608" y="93" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#0f172a">4</text>
+  <rect x="552" y="118" width="112" height="34" rx="4" fill="#f1f5f9" stroke="#475569" stroke-width="1.5"/>
+  <text x="608" y="139" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#0f172a">YA := 1 (A+)</text>
+
+  <!-- Transición T4-5 -->
+  <line x1="636" y1="88" x2="714" y2="88" stroke="#0f172a" stroke-width="2"/>
+  <line x1="675" y1="76" x2="675" y2="100" stroke="#00628a" stroke-width="3"/>
+  <text x="675" y="68" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#00628a">a1 = 1</text>
+
+  <!-- Etapa 5: B+ Clampeo -->
+  <rect x="714" y="66" width="56" height="44" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <text x="742" y="93" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#0f172a">5</text>
+  <rect x="682" y="118" width="124" height="34" rx="4" fill="#dcfce7" stroke="#15803d" stroke-width="1.5"/>
+  <text x="744" y="139" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#14532d">YB+ := 1, YA := 1</text>
+
+  <!-- Bajada a Etapa 6 -->
+  <path d="M 770 88 L 826 88 L 826 246 L 560 246" fill="none" stroke="#0f172a" stroke-width="2"/>
+  <line x1="690" y1="234" x2="690" y2="258" stroke="#00628a" stroke-width="3"/>
+  <text x="690" y="226" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#00628a">b1 · a1 = 1</text>
+
+  <!-- Etapa 6: Motor Trifásico M1 Giro Derecha -->
+  <rect x="492" y="224" width="68" height="44" fill="#e0e7ff" stroke="#3730a3" stroke-width="2.5"/>
+  <text x="526" y="251" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#1e1b4b">6</text>
+  <rect x="392" y="280" width="268" height="40" rx="4" fill="#e0e7ff" stroke="#3730a3" stroke-width="1.5"/>
+  <text x="526" y="305" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#1e1b4b">KM1 := 1 (Motor M1 Giro CW) · YA := 1 · T2 (5 s)</text>
+
+  <!-- Transición final y retorno a Etapa 0 -->
+  <path d="M 492 246 L 72 246 L 72 110" fill="none" stroke="#0f172a" stroke-width="2"/>
+  <line x1="280" y1="234" x2="280" y2="258" stroke="#00628a" stroke-width="3"/>
+  <text x="280" y="226" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#00628a">T2 (5.0 s) + S0=0 + RT1=0</text>
+  <polygon points="72,112 67,122 77,122" fill="#0f172a"/>
+
+  <text x="440" y="362" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#475569">
+    Ecuación sin doble bobina en PLC: YA (%Q0.0) = M1 + M4 + M5 + M6 | YB- (%Q0.2) = M3 | YB+ (%Q0.1) = M5 | KM1 (%Q0.3) = M6 · RT1
+  </text>
+</svg>

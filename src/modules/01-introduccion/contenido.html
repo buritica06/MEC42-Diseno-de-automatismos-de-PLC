@@ -1,0 +1,240 @@
+<h2 id="contexto">1. Contexto industrial: Célula de Mecanizado Electroneumática</h2>
+<p>
+  En las líneas de manufactura metalmecánica y autopartista, las operaciones de taladrado, avellanado o refrentado
+  exigen que la pieza metálica sea alimentada, asentada contra topes de referencia libres de viruta y prensada con
+  fuerza constante antes de que el husillo de corte entre en contacto con el material. Un fallo de sincronismo o la
+  pérdida de sujeción mientras la herramienta gira a \(1728\text{ rpm}\) provocaría la proyección violenta de la pieza y
+  la fractura de la herramienta.
+</p>
+<p>
+  En esta <strong>Práctica de Laboratorio N.º 07</strong> diseñarás, programarás en un PLC Siemens S7-1200 (TIA Portal) y
+  montarás físicamente el sistema de control para una célula de mecanizado gobernada por un pulsador de marcha
+  (<strong>S1</strong>, contacto NA) y un pulsador de parada/emergencia (<strong>S0</strong>, contacto NC), cuya
+  secuencia operativa es:
+</p>
+\[
+  \text{S1 (Marcha)} \longrightarrow A+ \longrightarrow A- \longrightarrow B- \longrightarrow A+ \longrightarrow B+
+  \longrightarrow \text{Motor Trifásico } M_1 \text{ (Giro a la derecha CW)}
+\]
+
+<div class="callout callout--def" role="note">
+  <span class="callout__title">Definición — Memoria neumática biestable vs. retorno por muelle monoestable</span>
+  <p>
+    Una <strong>electroválvula 5/2 monoestable</strong> (Cilindro A, solenoide \(Y_A\)) posee un resorte interno que
+    regresa la corredera a su estado de reposo apenas desaparece la señal eléctrica de \(24\text{ VDC}\). En cambio, una
+    <strong>electroválvula 5/2 biestable</strong> (Cilindro B, solenoides \(Y_{B+}\) y \(Y_{B-}\)) conserva
+    mecánicamente su última posición conmutada mediante fricción controlada y sellos internos, actuando como una
+    memoria física frente a caídas de tensión eléctrica (IEC 60848, 2013; Festo Didactic, 2015).
+  </p>
+</div>
+
+<h2 id="justificacion-secuencia">2. Justificación técnica de cada etapa de la secuencia</h2>
+<p>
+  En ingeniería de automatización ningún movimiento es arbitrario. Analiza por qué la secuencia requiere dos avances
+  del cilindro \(A\) y un comando explícito \(B-\) aunque el cilindro \(B\) inicie retraído:
+</p>
+<ul>
+  <li>
+    <strong>Etapa 1 (\(A+\)) y Etapa 2 (\(A-\)) — Pre-posicionamiento y barrido de cuna:</strong> El cilindro \(A\)
+    (monoestable, \(\varnothing 25\text{ mm}\), carrera \(100\text{ mm}\)) avanza por primera vez (\(Y_A = 1\)) para
+    empujar la pieza bruta desde el cargador hasta el tope mecánico y barrer restos de viruta de la cuna. Al tocar el
+    sensor magnético \(a_1 = 1\), se desenergiza \(Y_A = 0\) y el muelle interno retrae el vástago (\(A-\)) hasta
+    \(a_0 = 1\), liberando momentáneamente la pieza para que asiente por gravedad sobre la base rectificada.
+  </li>
+  <li>
+    <strong>Etapa 3 (\(B-\)) — Homing de seguridad del cilindro biestable:</strong> Antes de iniciar el ciclo, el
+    vástago del cilindro \(B\) (\(\varnothing 32\text{ mm}\), carrera \(50\text{ mm}\)) <em>no está afuera</em>
+    (\(b_0 = 1\)). Sin embargo, al ser gobernado por una válvula <strong>5/2 biestable</strong> sin resorte, tras una
+    purga de aire o intervención de mantenimiento la corredera interna puede quedar en una posición intermedia
+    indeterminada. Emitir el pulso \(Y_{B-} = 1\) durante \(0.5\text{ s}\) garantiza que la corredera quede
+    mecánicamente enclavada en retracción y que la cámara delantera esté presurizada antes de fijar la pieza.
+  </li>
+  <li>
+    <strong>Etapa 4 (\(A+\)) — Fijación axial definitiva:</strong> Con \(B\) asegurado atrás, el cilindro \(A\) vuelve a
+    extenderse (\(Y_A = 1\)) y permanece extendido el resto del proceso, sosteniendo la cara lateral de la pieza contra
+    el escantillón de referencia (\(a_1 = 1\)).
+  </li>
+  <li>
+    <strong>Etapa 5 (\(B+\)) — Clampeo o sujeción de alta fuerza:</strong> Se energiza la bobina \(Y_{B+} = 1\) y el
+    cilindro biestable \(B\) avanza hasta prensar verticalmente la pieza (\(b_1 = 1\)). Si ocurriera un corte eléctrico
+    de \(24\text{ VDC}\) en la planta durante el mecanizado, la válvula biestable mantiene la presión en la cámara
+    trasera de \(B\), impidiendo que la pieza salga despedida por la inercia del husillo.
+  </li>
+  <li>
+    <strong>Etapa 6 (Motor Trifásico \(M_1\) gira hacia la derecha):</strong> Solo cuando el PLC verifica el bloqueo en
+    dos ejes (\(a_1 = 1 \land b_1 = 1\)) y la ausencia de sobrecarga térmica (\(\text{RT1} = 1\)), activa la salida del
+    contactor \(KM_1\) (\(\text{\%Q0.3} = 1\)). El motor de inducción trifásico (\(220\text{ VAC}\), \(60\text{ Hz}\))
+    gira en sentido horario (secuencia directa de fases \(L_1\text{-}U_1\), \(L_2\text{-}V_1\), \(L_3\text{-}W_1\))
+    durante el tiempo de mecanizado \(T_2 = 5.0\text{ s}\).
+  </li>
+</ul>
+
+<div class="callout callout--thm" role="note">
+  <span class="callout__title">Idea clave — Prevención del error de doble bobina en PLC</span>
+  <p>
+    Dado que la acción \(A+\) ocurre tanto en la <strong>Etapa 1</strong> como desde la <strong>Etapa 4 hasta la
+    Etapa 6</strong>, jamás debes programar dos instrucciones de salida <code>--( )--</code> separadas hacia
+    <code>%Q0.0 (YA)</code> en distintos segmentos del programa Ladder, pues el PLC sobrescribirá el registro de imagen
+    de proceso (PAE/PAA) con el último segmento evaluado. Debes usar marcas internas de etapa (\(M_0 \dots M_6\)) y un
+    único segmento de salidas con una compuerta OR lógica:
+    \(Y_A = M_1 + M_4 + M_5 + M_6\).
+  </p>
+</div>
+
+<h2 id="grafcet">3. Diagrama GRAFCET Normalizado (IEC 60848)</h2>
+<p>
+  El modelo secuencial síncrono se estructura en siete etapas (\(E_0\) a \(E_6\)) conforme a la norma internacional
+  <strong>IEC 60848</strong>:
+</p>
+
+<figure class="figura">
+  <img
+    src="./assets/images/grafcet-celula.svg"
+    alt="Diagrama GRAFCET IEC 60848 de la célula de mecanizado desde la Etapa 0 de reposo hasta la Etapa 6 de giro del motor trifásico M1"
+    loading="lazy"
+  />
+  <figcaption>
+    Figura 1. Diagrama GRAFCET tecnológico de la Célula de Mecanizado (elaboración propia bajo estándar IEC 60848).
+  </figcaption>
+</figure>
+
+<h2 id="direccionamiento-plc">4. Mapa de Entradas/Salidas (I/O) y Ecuaciones de Mando</h2>
+<p>
+  Para la implementación en el PLC <strong>Siemens S7-1200 (CPU 1214C DC/DC/DC o DC/DC/Rly)</strong>, utiliza el
+  siguiente direccionamiento normalizado en la tabla de variables de TIA Portal:
+</p>
+
+<div class="table-wrap">
+  <table>
+    <caption>Tabla 1. Asignación de entradas digitales (24 VDC) y salidas de potencia del PLC.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Símbolo</th>
+        <th scope="col">Dirección PLC</th>
+        <th scope="col">Tipo de señal</th>
+        <th scope="col">Descripción funcional en planta</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>S1_Marcha</code></td>
+        <td><code>%I0.0</code></td>
+        <td>Entrada Digital (NA)</td>
+        <td>Pulsador verde de inicio de secuencia automática</td>
+      </tr>
+      <tr>
+        <td><code>S0_Parada</code></td>
+        <td><code>%I0.1</code></td>
+        <td>Entrada Digital (NC)</td>
+        <td>Pulsador rojo / seta de parada de emergencia (\(1\) en reposo normal)</td>
+      </tr>
+      <tr>
+        <td><code>Sensor_a0</code></td>
+        <td><code>%I0.2</code></td>
+        <td>Entrada Digital (NA)</td>
+        <td>Sensor magnético Reed: cilindro A retraído (\(0\text{ mm}\))</td>
+      </tr>
+      <tr>
+        <td><code>Sensor_a1</code></td>
+        <td><code>%I0.3</code></td>
+        <td>Entrada Digital (NA)</td>
+        <td>Sensor magnético Reed: cilindro A extendido (\(100\text{ mm}\))</td>
+      </tr>
+      <tr>
+        <td><code>Sensor_b0</code></td>
+        <td><code>%I0.4</code></td>
+        <td>Entrada Digital (NA)</td>
+        <td>Sensor magnético Reed: cilindro B retraído (\(0\text{ mm}\))</td>
+      </tr>
+      <tr>
+        <td><code>Sensor_b1</code></td>
+        <td><code>%I0.5</code></td>
+        <td>Entrada Digital (NA)</td>
+        <td>Sensor magnético Reed: cilindro B extendido (\(50\text{ mm}\))</td>
+      </tr>
+      <tr>
+        <td><code>Rel_Termico_RT1</code></td>
+        <td><code>%I0.6</code></td>
+        <td>Entrada Digital (NC)</td>
+        <td>Contacto auxiliar 95-96 del guardamotor / relé térmico de \(M_1\)</td>
+      </tr>
+      <tr>
+        <td><code>Solenoide_YA</code></td>
+        <td><code>%Q0.0</code></td>
+        <td>Salida Digital</td>
+        <td>Bobina única 24 VDC de electroválvula 5/2 monoestable (Cilindro A)</td>
+      </tr>
+      <tr>
+        <td><code>Solenoide_YB_Mas</code></td>
+        <td><code>%Q0.1</code></td>
+        <td>Salida Digital</td>
+        <td>Bobina de avance (\(B+\)) de electroválvula 5/2 biestable (Cilindro B)</td>
+      </tr>
+      <tr>
+        <td><code>Solenoide_YB_Menos</code></td>
+        <td><code>%Q0.2</code></td>
+        <td>Salida Digital</td>
+        <td>Bobina de retorno/homing (\(B-\)) de electroválvula 5/2 biestable</td>
+      </tr>
+      <tr>
+        <td><code>Contactor_KM1</code></td>
+        <td><code>%Q0.3</code></td>
+        <td>Salida Digital</td>
+        <td>Bobina del contactor trifásico \(KM_1\) (Motor \(M_1\) giro horario CW)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p>
+  Las ecuaciones booleanas de activación (<em>Set</em>), desactivación (<em>Reset</em>) y etapa de potencia para el
+  bloque <code>Main (OB1)</code> bajo normas IEC 61131-3 son:
+</p>
+\[
+  \begin{aligned}
+    \text{Set}(M_1) &= M_0 \cdot S_1 \cdot S_0 \cdot \text{RT}_1 \cdot a_0 \cdot b_0, &\quad
+    \text{Set}(M_2) &= M_1 \cdot a_1, &\quad
+    \text{Set}(M_3) &= M_2 \cdot a_0 \\[4pt]
+    \text{Set}(M_4) &= M_3 \cdot b_0 \cdot T_1, &\quad
+    \text{Set}(M_5) &= M_4 \cdot a_1, &\quad
+    \text{Set}(M_6) &= M_5 \cdot b_1 \cdot a_1
+  \end{aligned}
+\]
+\[
+  Y_A = M_1 + M_4 + M_5 + M_6, \qquad
+  Y_{B-} = M_3 + M_0, \qquad
+  Y_{B+} = M_5, \qquad
+  KM_1 = M_6 \cdot S_0 \cdot \text{RT}_1
+\]
+
+<details class="disclosure">
+  <summary>Estructura recomendada del programa en bloques IEC 61131-3 (Texto Estructurado SCL / Ladder)</summary>
+  <div>
+    <p>
+      Si deseas verificar la lógica de etapas en un bloque de función (FB) en TIA Portal, observa la equivalencia en
+      lenguaje SCL sin conflicto de doble bobina:
+    </p>
+    <pre class="no-math"><code>// Condición maestra de seguridad (S0 y RT1 son contactos NC físicos: 1 = normal)
+#Seguridad_OK := "S0_Parada" AND "Rel_Termico_RT1";
+
+IF NOT #Seguridad_OK THEN
+    #Etapa := 0;
+END_IF;
+
+// Salidas físicas consolidadas en un único punto del ciclo de scan
+"Solenoide_YA"       := (#Etapa = 1) OR (#Etapa = 4) OR (#Etapa = 5) OR (#Etapa = 6);
+"Solenoide_YB_Menos" := (#Etapa = 3);
+"Solenoide_YB_Mas"   := (#Etapa = 5);
+"Contactor_KM1"      := (#Etapa = 6) AND #Seguridad_OK;</code></pre>
+  </div>
+</details>
+
+<div class="callout callout--warn" role="note">
+  <span class="callout__title">Atención — Exclusión mutua en electroválvulas biestables</span>
+  <p>
+    En una electroválvula 5/2 biestable nunca debes energizar simultáneamente \(Y_{B+}\) (\(\text{\%Q0.1}\)) y
+    \(Y_{B-}\) (\(\text{\%Q0.2}\)). Si ambas bobinas reciben \(24\text{ VDC}\) al mismo tiempo, las fuerzas
+    neumáticas de pilotaje se contrarrestan y la corredera no conmuta de forma predecible. Incluye un contacto
+    normalmente cerrado de interbloqueo cruzado en tus ramas de salida.
+  </p>
+</div>

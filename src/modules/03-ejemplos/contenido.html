@@ -1,0 +1,194 @@
+<p>
+  A continuación estudiarás dos casos resueltos de ingeniería aplicada a la célula de mecanizado —uno de
+  dimensionamiento físico-matemático y otro de diagnóstico de programación PLC— seguidos del protocolo oficial de
+  montaje práctico en el banco de laboratorio.
+</p>
+
+<h2 id="ejemplo-calculo">1. Ejemplo 1 — Cálculo de Fuerza de Clampeo y Corriente del Husillo Trifásico</h2>
+<div class="callout callout--ex" role="note">
+  <span class="callout__title">Enunciado del problema</span>
+  <p>
+    La operación de mecanizado en la Etapa 6 exige que la mordaza del <strong>Cilindro B biestable</strong>
+    (\(D_B = 32\text{ mm}\), rendimiento mecánico \(\eta = 0.90\)) ejerza al menos \(350\text{ N}\) de fuerza de
+    sujeción, y que el <strong>Cilindro A monoestable</strong> (\(D_A = 25\text{ mm}\), resorte de retorno
+    \(F_{\text{muelle}} = 25\text{ N}\), \(\eta = 0.90\)) supere \(200\text{ N}\) en el avance \(A+\). Si la red
+    neumática opera a \(P = 6.0\text{ bar}\):
+  </p>
+  <ol>
+    <li>Calcula las fuerzas efectivas \(F_{\text{ef},A}\) y \(F_{\text{ef},B}\) y determina la presión mínima admisible en red.</li>
+    <li>
+      Para el motor trifásico \(M_1\) (\(P_n = 0.37\text{ kW}\), \(V_L = 220\text{ VAC}\), \(60\text{ Hz}\), \(4\text{ polos}\),
+      \(s = 4\%\), \(\cos\varphi = 0.80\), \(\eta_m = 0.78\)), calcula la velocidad nominal de giro horario y la
+      corriente nominal \(I_n\) para ajustar el guardamotor \(\text{RT1}\).
+    </li>
+  </ol>
+</div>
+
+<p>
+  <strong>1. Datos:</strong> \(D_A = 0.025\text{ m}\), \(D_B = 0.032\text{ m}\), \(P = 6\text{ bar} = 6 \times 10^5\text{ Pa}\),
+  \(F_{\text{muelle}} = 25\text{ N}\), \(\eta = 0.90\).
+</p>
+
+<p><strong>2. Desarrollo paso a paso:</strong></p>
+<p>Áreas de émbolo en avance de ambos cilindros:</p>
+\[
+  A_A = \frac{\pi D_A^2}{4} = \frac{\pi (0.025\text{ m})^2}{4} \approx 4.9087 \times 10^{-4}\text{ m}^2, \qquad
+  A_B = \frac{\pi D_B^2}{4} = \frac{\pi (0.032\text{ m})^2}{4} \approx 8.0425 \times 10^{-4}\text{ m}^2
+\]
+<p>Fuerza efectiva del Cilindro A monoestable (descontando la oposición del resorte antagonista):</p>
+\[
+  F_{\text{ef},A}(P) = \eta\left(P \cdot 10^5 \cdot A_A - F_{\text{muelle}}\right)
+  = 0.90\left(49.0874\,P - 25\right) = 44.1786\,P - 22.5\ \text{N}
+\]
+<p>Evaluando en \(P = 6.0\text{ bar}\):</p>
+\[
+  F_{\text{ef},A}(6) = 44.1786(6) - 22.5 \approx 242.57\text{ N} &gt; 200\text{ N (Cumple)}
+\]
+<p>Fuerza efectiva de clampeo del Cilindro B biestable (sin resorte opositor):</p>
+\[
+  F_{\text{ef},B}(P) = \eta\left(P \cdot 10^5 \cdot A_B\right) = 72.3823\,P\ \text{N}
+  \;\Longrightarrow\; F_{\text{ef},B}(6) = 72.3823(6) \approx 434.29\text{ N} &gt; 350\text{ N (Cumple)}
+\]
+<p>Presión mínima de red para no perder los \(350\text{ N}\) de clampeo en \(B\):</p>
+\[
+  P_{\min} = \frac{350\text{ N}}{72.3823\text{ N/bar}} \approx 4.84\text{ bar}
+\]
+<p>Velocidad en carga y corriente nominal del husillo trifásico \(M_1\):</p>
+\[
+  n_s = \frac{120 \cdot f}{p} = \frac{120 \cdot 60}{4} = 1800\text{ rpm}, \qquad
+  n_r = n_s(1 - s) = 1800(1 - 0.04) = 1728\text{ rpm}
+\]
+\[
+  I_n = \frac{P_n}{\sqrt{3}\,V_L\,\cos\varphi\,\eta_m}
+  = \frac{370\text{ W}}{\sqrt{3} \cdot 220\text{ V} \cdot 0.80 \cdot 0.78} \approx 1.56\text{ A}
+\]
+
+<p>
+  <strong>3. Verificación interactiva:</strong> En la siguiente gráfica se modela \(y = 44.18\,a\,x - 22.5\,b\), donde
+  \(x\) es la presión en bar, \(a = 1\) es el factor de área del cilindro A y \(b = 1\) representa el descuento del
+  muelle de retorno (o ajusta \(b = 0\) y \(a = 1.64\) para obtener la recta del cilindro B biestable):
+</p>
+<div data-viz="graficaFuncion" data-preset="fuerzaCilindros"></div>
+
+<h2 id="ejemplo-analisis">2. Ejemplo 2 — Diagnóstico de Doble Bobina y Temporizador Watchdog</h2>
+<div class="callout callout--ex" role="note">
+  <span class="callout__title">Caso de diagnóstico en planta</span>
+  <p>
+    Durante las pruebas iniciales en el banco, un grupo de trabajo programa en el Segmento 2:
+    <code>M1 ---( %Q0.0 )</code> para el primer avance \(A+\), y en el Segmento 5:
+    <code>M4 ---( %Q0.0 )</code> para el segundo avance \(A+\). Al pulsar marcha (<code>S1</code>), la marca
+    <code>M1</code> se activa en el PLC, pero el cilindro \(A\) jamás se mueve y el sistema queda bloqueado en la
+    Etapa 1. Analiza la causa raíz y diseña la corrección junto con una supervisión de tiempo máximo (<em>Watchdog</em>).
+  </p>
+</div>
+<ol>
+  <li>
+    <strong>Identificar el fenómeno del ciclo de scan:</strong> El PLC Siemens S7-1200 no escribe inmediatamente en el
+    borne físico al evaluar cada peldaño Ladder; escribe en la <strong>Tabla de Imagen de Proceso de Salidas
+    (PAA)</strong> y vuelca los bits al hardware solo al final del <code>OB1</code>.
+  </li>
+  <li>
+    <strong>Aplicar el principio de evaluación secuencial:</strong> En la Etapa 1 (\(M_1 = 1\) y \(M_4 = 0\)), el
+    Segmento 2 escribe un <code>1</code> en <code>%Q0.0</code>, pero milisegundos después el Segmento 5 evalúa
+    \(M_4 = 0\) y sobrescribe un <code>0</code> en <code>%Q0.0</code>. Al finalizar el ciclo de scan, la salida física
+    recibe <code>0 VDC</code>.
+  </li>
+  <li>
+    <strong>Argumentar la solución normalizada IEC 61131-3:</strong> Cada salida física <code>%Q</code> debe aparecer en
+    una <strong>única instrucción de asignación</strong> en todo el programa, agrupando en paralelo (OR lógico) todas
+    las etapas donde dicha salida debe estar activa: \(Y_A = M_1 + M_4 + M_5 + M_6\).
+  </li>
+  <li>
+    <strong>Concluir con protección por Watchdog:</strong> Además de consolidar \(Y_A\), si en la Etapa 5 (\(B+\)) una
+    manguera neumática se desconecta y el sensor \(b_1\) no se activa en \(3.0\text{ s}\), un temporizador
+    <code>TON_Watchdog</code> disparado por \(M_5 \cdot \overline{b_1}\) debe resetear la secuencia a \(E_0\) y activar
+    una lámpara de fallo neumático, impidiendo que la célula quede energizada indefinidamente.
+  </li>
+</ol>
+
+<h2 id="procedimiento-montaje">3. Equipos, Materiales y Procedimiento de Montaje en Laboratorio</h2>
+<div class="table-wrap">
+  <table>
+    <caption>Tabla 2. Listado de equipos, actuadores y elementos de control para el montaje práctico.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Categoría</th>
+        <th scope="col">Elemento / Referencia</th>
+        <th scope="col">Especificación técnica</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Controlador Lógico</td>
+        <td>PLC Siemens S7-1200 (CPU 1214C)</td>
+        <td>Alimentación \(24\text{ VDC}\), 14 DI / 10 DO, software TIA Portal V17+</td>
+      </tr>
+      <tr>
+        <td>Actuador Lineal A</td>
+        <td>Cilindro de doble efecto + Válvula 5/2 Monoestable</td>
+        <td>\(\varnothing 25\text{ mm}\), carrera \(100\text{ mm}\), 1 solenoide \(Y_A\) (\(24\text{ VDC}\)) y retorno por muelle</td>
+      </tr>
+      <tr>
+        <td>Actuador Lineal B</td>
+        <td>Cilindro de doble efecto + Válvula 5/2 Biestable</td>
+        <td>\(\varnothing 32\text{ mm}\), carrera \(50\text{ mm}\), 2 solenoides \(Y_{B+}, Y_{B-}\) (\(24\text{ VDC}\)) con memoria</td>
+      </tr>
+      <tr>
+        <td>Actuador Rotativo M1</td>
+        <td>Motor de Inducción Trifásico Jaula de Ardilla</td>
+        <td>\(220\text{ VAC}\), \(60\text{ Hz}\), \(0.37\text{ kW}\), contactor \(KM_1\) y guardamotor/relé térmico \(\text{RT1}\)</td>
+      </tr>
+      <tr>
+        <td>Captadores y Mando</td>
+        <td>4 Sensores magnéticos Reed (\(a_0, a_1, b_0, b_1\)) y botonera</td>
+        <td>Sensores 3 hilos PNP \(24\text{ VDC}\); pulsador \(S_1\) (NA) y parada \(S_0\) (NC)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p>Sigue rigurosamente estos <strong>8 pasos de implementación práctica</strong> en el banco de trabajo:</p>
+<ol>
+  <li>
+    <strong>Aplicación de las 5 Reglas de Oro:</strong> Antes de conectar cualquier conductor, verifica que el
+    interruptor termomagnético trifásico (\(220\text{ VAC}\)), la fuente de \(24\text{ VDC}\) y la válvula de corte de la
+    unidad FRL estén bloqueados en posición <code>OFF</code>.
+  </li>
+  <li>
+    <strong>Montaje neumático de potencia:</strong> Fija los cilindros \(A\) y \(B\) en el panel perfilado. Conecta la
+    válvula 5/2 monoestable (\(Y_A\)) al cilindro \(A\) y la válvula 5/2 biestable (\(Y_{B+}, Y_{B-}\)) al cilindro
+    \(B\), intercalando reguladores de caudal unidireccionales. Verifica que en estado inicial el vástago de \(B\) esté
+    retraído (\(b_0 = 1\)).
+  </li>
+  <li>
+    <strong>Ajuste de sensores magnéticos Reed:</strong> Posiciona y asegura los sensores \(a_0, a_1\) sobre la camisa
+    del cilindro \(A\) y \(b_0, b_1\) sobre el cilindro \(B\).
+  </li>
+  <li>
+    <strong>Cableado de entradas al PLC (`%I0.0` a `%I0.6`):</strong> Conecta \(S_1\) (NA), \(S_0\) (NC), los cuatro
+    sensores Reed y el contacto auxiliar normalmente cerrado <code>95-96</code> del relé térmico \(\text{RT1}\) a las
+    entradas digitales del S7-1200.
+  </li>
+  <li>
+    <strong>Cableado de salidas de control (`%Q0.0` a `%Q0.3`):</strong> Conecta las salidas del PLC a las bobinas de
+    las electroválvulas \(Y_A\), \(Y_{B+}\), \(Y_{B-}\) y a la bobina \(A_1\text{-}A_2\) del contactor \(KM_1\) (en
+    serie por hardware con el contacto NC de \(\text{RT1}\)).
+  </li>
+  <li>
+    <strong>Cableado del circuito de fuerza trifásico (\(220\text{ VAC}\)):</strong> Conecta la red trifásica
+    \(L_1, L_2, L_3\) a través del guardamotor y los contactos principales de \(KM_1\) (\(1\text{-}2, 3\text{-}4,
+    5\text{-}6\)) hacia los bornes \(U_1, V_1, W_1\) del motor \(M_1\) en secuencia directa (giro a la derecha) más el
+    conductor de protección <code>PE</code>.
+  </li>
+  <li>
+    <strong>Descarga y prueba en vacío (I/O Check):</strong> Energiza únicamente el circuito de control de
+    \(24\text{ VDC}\), carga el proyecto desde TIA Portal y verifica en la tabla de observación que los LEDs de
+    \(a_0 = 1\), \(b_0 = 1\), \(S_0 = 1\) y \(\text{RT1} = 1\) respondan correctamente.
+  </li>
+  <li>
+    <strong>Puesta en marcha integral:</strong> Abre el suministro neumático a \(6\text{ bar}\), habilita la potencia
+    trifásica y presiona \(S_1\). Comprueba la ejecución completa
+    \(A+ \to A- \to B- \to A+ \to B+ \to \text{Motor } M_1 \text{ (Giro a la derecha)}\) y valida la parada de
+    emergencia con \(S_0\).
+  </li>
+</ol>

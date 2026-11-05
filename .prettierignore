@@ -1,0 +1,6 @@
+dist
+node_modules
+public
+package-lock.json
+# El contenido de los capítulos lleva LaTeX alineado a mano: no se reformatea.
+src/modules/**/contenido.html

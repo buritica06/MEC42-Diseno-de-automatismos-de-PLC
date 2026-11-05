@@ -1,0 +1,216 @@
+<h2 id="seguridad-electrica">1. Seguridad Eléctrica: Las 5 Reglas de Oro</h2>
+<p>
+  En esta práctica trabajarás simultáneamente con tres niveles de energía: <strong>aire comprimido industrial
+  (\(6\text{ bar}\))</strong>, <strong>tensión de control en corriente continua (\(24\text{ VDC}\))</strong> y
+  <strong>tensión de potencia trifásica en corriente alterna (\(220\text{ VAC}\), \(60\text{ Hz}\))</strong> para el
+  accionamiento del motor de inducción \(M_1\). Antes de realizar cualquier montaje, modificación de cableado o
+  intervención en el banco de trabajo, es obligatorio aplicar en estricto orden las
+  <strong>5 Reglas de Oro de la Seguridad Eléctrica</strong> (RETIE, 2013):
+</p>
+
+<ol>
+  <li>
+    <strong>1.ª Regla — Desconectar completamente la instalación (Corte visible o efectivo):</strong> Abre el
+    interruptor termomagnético general trifásico (\(220\text{ VAC}\)), apaga la fuente conmutada de \(24\text{ VDC}\) y
+    cierra la válvula de corte deslizante de la unidad de mantenimiento neumática (FRL), purgando el aire residual de
+    la red. Nunca intervengas bornes confiando únicamente en que el PLC se encuentra en modo <code>STOP</code>.
+  </li>
+  <li>
+    <strong>2.ª Regla — Asegurar contra cualquier reconexión accidental (Bloqueo y Etiquetado LOTO):</strong> Enclava
+    mecánicamente los dispositivos de corte (candado de bloqueo y tarjeta de advertencia <em>Lockout/Tagout</em>) para
+    impedir que otro compañero o usuario del laboratorio restablezca la energía eléctrica o neumática mientras tus
+    manos se encuentran dentro del tablero de control o cerca del eje del motor trifásico.
+  </li>
+  <li>
+    <strong>3.ª Regla — Verificar la ausencia de tensión:</strong> Utiliza un multímetro digital certificado (en escala
+    de tensión alterna \(\text{VAC}\) para las líneas \(L_1, L_2, L_3\) y tensión continua \(\text{VDC}\) para la barra
+    de \(+24\text{ V}\)) y comprueba entre fases, entre cada fase y tierra (<code>PE</code>) y en las bornas del PLC que
+    efectivamente existen \(0\text{ V}\) antes de tocar cualquier conductor desnudo.
+  </li>
+  <li>
+    <strong>4.ª Regla — Poner a tierra y en cortocircuito cuando corresponda:</strong> Verifica que el chasis metálico
+    del motor trifásico \(M_1\), el riel DIN del PLC S7-1200 y la estructura del banco estén sólidamente conectados al
+    conductor de protección de puesta a tierra (<code>PE</code>, cable verde-amarillo), garantizando que cualquier
+    falla de aislamiento sea despejada de inmediato por las protecciones sin electrificar al operador.
+  </li>
+  <li>
+    <strong>5.ª Regla — Señalizar y delimitar adecuadamente la zona de trabajo:</strong> Mantén despejada el área
+    alrededor de los vástagos de los cilindros \(A\) y \(B\) y del eje rotativo del motor trifásico \(M_1\). Recoge el
+    cabello largo, retira anillos, relojes o elementos metálicos y delimita la estación antes de energizar para las
+    pruebas funcionales.
+  </li>
+</ol>
+
+<p>
+  El cumplimiento riguroso de estas cinco reglas tiene cuatro propósitos innegociables en tu formación:
+  <strong>la prevención de accidentes</strong> por choque eléctrico o atrapamiento mecánico;
+  <strong>la protección de las personas</strong> (salvaguardar tu vida y la de tus compañeros);
+  <strong>la protección de equipos industriales</strong> (evitar cortocircuitos que destruyan las salidas a transistor
+  del PLC S7-1200 o quemen los devanados del motor); y el ejercicio de la
+  <strong>responsabilidad profesional del futuro ingeniero o tecnólogo</strong> en automatización y control.
+</p>
+
+<div class="callout callout--warn" role="alert">
+  <span class="callout__title">Advertencia Crítica de Seguridad Industrial</span>
+  <p>
+    <strong>El incumplimiento de las 5 Reglas de Oro de la Seguridad Eléctrica constituye una falta grave de seguridad
+    en el laboratorio.</strong> Cualquier intervención sobre el circuito de potencia trifásico (\(220\text{ VAC}\)) o de
+    control (\(24\text{ VDC}\)) con el sistema energizado, o la puesta en marcha sin la autorización previa del docente,
+    dará lugar a la suspensión inmediata de la práctica.
+  </p>
+</div>
+
+<h2 id="protocolo-verificacion">2. Matriz de Verificación Experimental en Planta</h2>
+<p>
+  Durante la sustentación práctica frente al docente, registra y comprueba cada una de las transiciones físicas del
+  sistema con la siguiente tabla de validación funcional:
+</p>
+
+<div class="table-wrap">
+  <table>
+    <caption>Tabla 3. Protocolo de pruebas funcionales de la Célula de Mecanizado en el banco S7-1200.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Etapa GRAFCET</th>
+        <th scope="col">Movimiento esperado</th>
+        <th scope="col">Salidas PLC activas</th>
+        <th scope="col">Sensores que validan el paso</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>Etapa 0</code></td>
+        <td>Reposo inicial (\(A\) retraído, \(B\) retraído, \(M_1\) apagado)</td>
+        <td>Ninguna (<code>0</code>)</td>
+        <td><code>a0=1</code>, <code>b0=1</code>, <code>S0=1</code>, <code>RT1=1</code> + pulso <code>S1=1</code></td>
+      </tr>
+      <tr>
+        <td><code>Etapa 1</code></td>
+        <td>\(A+\) (Primer avance: alimentación y barrido de cuna)</td>
+        <td><code>%Q0.0 (YA = 1)</code></td>
+        <td>Activación de <code>%I0.3 (a1 = 1)</code> en \(100\text{ mm}\)</td>
+      </tr>
+      <tr>
+        <td><code>Etapa 2</code></td>
+        <td>\(A-\) (Retorno por resorte de la válvula monoestable)</td>
+        <td>Ninguna (<code>YA = 0</code>)</td>
+        <td>Activación de <code>%I0.2 (a0 = 1)</code> en \(0\text{ mm}\)</td>
+      </tr>
+      <tr>
+        <td><code>Etapa 3</code></td>
+        <td>\(B-\) (Aseguramiento / Homing activo de válvula biestable)</td>
+        <td><code>%Q0.2 (YB- = 1)</code></td>
+        <td>Confirmación <code>%I0.4 (b0 = 1)</code> + temporizador \(T_1 = 0.5\text{ s}\)</td>
+      </tr>
+      <tr>
+        <td><code>Etapa 4</code></td>
+        <td>\(A+\) (Segundo avance: fijación axial definitiva)</td>
+        <td><code>%Q0.0 (YA = 1)</code></td>
+        <td>Activación de <code>%I0.3 (a1 = 1)</code> en \(100\text{ mm}\)</td>
+      </tr>
+      <tr>
+        <td><code>Etapa 5</code></td>
+        <td>\(B+\) (Avance de mordaza: clampeo biestable de pieza)</td>
+        <td><code>%Q0.1 (YB+ = 1)</code>, <code>%Q0.0 (YA = 1)</code></td>
+        <td>Activación de <code>%I0.5 (b1 = 1)</code> con <code>a1 = 1</code></td>
+      </tr>
+      <tr>
+        <td><code>Etapa 6</code></td>
+        <td>Motor Trifásico \(M_1\) gira hacia la derecha (CW)</td>
+        <td><code>%Q0.3 (KM1 = 1)</code>, <code>%Q0.0 (YA = 1)</code></td>
+        <td>Temporizador de mecanizado \(T_2 = 5.0\text{ s}\) y retorno a <code>Etapa 0</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="evaluacion">3. Rúbrica de Evaluación del Laboratorio</h2>
+<div class="table-wrap">
+  <table>
+    <caption>Rúbrica oficial de calificación para la Práctica de Laboratorio Semana 7 — Célula de Mecanizado.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Criterio</th>
+        <th scope="col">Descripción</th>
+        <th scope="col">Nota</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Circuito montado y funcionando correctamente</strong></td>
+        <td>
+          El circuito físico fue implementado, probado y demuestra el funcionamiento completo de la secuencia
+          solicitada (\(A+ \to A- \to B- \to A+ \to B+ \to \text{Motor trifásico gira hacia la derecha}\)).
+        </td>
+        <td><strong>5.0</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Programación entregada pero circuito no montado o no probado</strong></td>
+        <td>
+          Se evidencia únicamente la programación, sin validación práctica mediante montaje y pruebas funcionales.
+        </td>
+        <td><strong>2.0</strong></td>
+      </tr>
+      <tr>
+        <td><strong>No presenta programación ni montaje</strong></td>
+        <td>No existe evidencia de desarrollo del laboratorio.</td>
+        <td><strong>0.0</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="callout callout--thm" role="note">
+  <span class="callout__title">Nota aclaratoria institucional</span>
+  <p>
+    <strong>Importante:</strong> La simulación o programación por sí sola no garantiza la validación de competencias
+    prácticas. El estudiante deberá demostrar el montaje y funcionamiento real del sistema para optar a la calificación
+    máxima del laboratorio.
+  </p>
+</div>
+
+<h2 id="sintesis">4. Síntesis y Siguiente Sesión</h2>
+<ul>
+  <li>
+    El modelado mediante <strong>GRAFCET (IEC 60848)</strong> garantiza transiciones deterministas y evita colisiones
+    mecánicas cuando una misma secuencia repite el movimiento de un actuador (\(A+\) en las Etapas 1 y 4).
+  </li>
+  <li>
+    Combinar un cilindro <strong>monoestable</strong> para alimentación (\(A\)) con un cilindro
+    <strong>biestable</strong> para clampeo (\(B\)) aporta seguridad intrínseca: ante una caída de \(24\text{ VDC}\), la
+    memoria mecánica de la válvula biestable mantiene la pieza sujeta mientras el husillo trifásico se detiene.
+  </li>
+  <li>
+    <strong>Preparación para la Semana 8:</strong> En la próxima sesión abordaremos secuencias con divergencia y
+    convergencia en <code>OR</code> y <code>AND</code> en GRAFCET e integración de pantallas HMI para diagnóstico de
+    alarmas en tiempo real.
+  </li>
+</ul>
+
+<h2 id="bibliografia">5. Bibliografía (formato IEEE)</h2>
+<ol>
+  <li>
+    International Electrotechnical Commission, <em>IEC 60848:2013 — GRAFCET specification language for sequential
+    function charts</em>, 3.ª ed. Ginebra, Suiza: IEC, 2013.
+  </li>
+  <li>
+    International Electrotechnical Commission, <em>IEC 61131-3:2013 — Programmable controllers — Part 3: Programming
+    languages</em>, 3.ª ed. Ginebra, Suiza: IEC, 2013.
+  </li>
+  <li>
+    Ministerio de Minas y Energía de Colombia, <em>Reglamento Técnico de Instalaciones Eléctricas (RETIE) — Resolución
+    90708 de 2013, Art. 18: Reglas de oro de la seguridad eléctrica</em>. Bogotá, Colombia: MinMinas, 2013.
+  </li>
+  <li>
+    R. Piedrafita Moreno, <em>Ingeniería de la automatización industrial</em>, 2.ª ed. Madrid, España: Ra-Ma Editorial,
+    2004, cap. 4–6.
+  </li>
+  <li>
+    E. Mandado Pérez, J. Marcos Acevedo, C. Fernández Silva y J. I. Armesto Quiroga, <em>Autómatas programables y
+    sistemas de automatización</em>, 1.ª ed. Barcelona, España: Marcombo, 2010, cap. 5–8.
+  </li>
+  <li>
+    Festo Didactic SE, <em>Electroneumática — Nivel Básico TP 201: Manual de estudio y ejercicios</em>. Denkendorf,
+    Alemania: Festo Didactic, 2015.
+  </li>
+</ol>
