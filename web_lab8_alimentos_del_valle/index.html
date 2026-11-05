@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- El título, la descripción, la cabecera y el pie se completan desde src/content/curso.js -->
+    <title>Plataforma educativa · IUB</title>
+    <meta
+      name="description"
+      content="Plataforma educativa interactiva de la Institución Universitaria de Barranquilla."
+    />
+    <meta name="theme-color" content="#121023" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <!-- Aplica el tema guardado antes del primer pintado (evita el destello claro/oscuro). -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('iub:tema');
+          if (t !== 'light' && t !== 'dark') {
+            t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {
+          /* almacenamiento bloqueado: se queda el tema por defecto */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+    <header class="site-header" role="banner">
+      <button
+        class="icon-btn menu-toggle"
+        type="button"
+        aria-controls="nav-capitulos"
+        aria-expanded="false"
+        aria-label="Abrir menú de capítulos"
+        data-action="toggle-nav"
+      ></button>
+      <a class="brand" href="#/" aria-label="Inicio">
+        <img class="brand__logo" src="./assets/images/logo_iub_blanco.png" alt="IUB" width="96" height="32" />
+        <span class="brand__text">
+          <span class="brand__title"></span>
+          <span class="brand__subtitle"></span>
+        </span>
+      </a>
+      <div class="header-progress" aria-live="polite">
+        <div
+          class="progress"
+          role="progressbar"
+          aria-label="Progreso del curso"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <div class="progress__bar"></div>
+        </div>
+        <span class="progress__label">0 %</span>
+      </div>
+      <button class="icon-btn theme-toggle" type="button" data-action="toggle-theme" aria-pressed="false"></button>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar" id="nav-capitulos" aria-label="Capítulos">
+        <nav class="chapter-nav" aria-label="Navegación por capítulos"></nav>
+      </aside>
+      <div class="sidebar-backdrop" data-action="close-nav" hidden></div>
+
+      <main id="contenido" class="main" tabindex="-1">
+        <div class="view" data-view></div>
+      </main>
+    </div>
+
+    <footer class="site-footer">
+      <p data-curso="pie"></p>
+      <p class="site-footer__refs" data-curso="referencias"></p>
+    </footer>
+
+    <noscript>
+      <p class="noscript">Esta plataforma necesita JavaScript para las visualizaciones interactivas.</p>
+    </noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

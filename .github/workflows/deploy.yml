@@ -28,6 +28,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            web_lab8_alimentos_del_valle/package-lock.json
 
       - name: Instalar dependencias
         run: npm ci
@@ -37,6 +40,21 @@ jobs:
 
       - name: Compilar
         run: npm run build
+
+      - name: Laboratorio 8 - instalar dependencias
+        working-directory: web_lab8_alimentos_del_valle
+        run: npm ci
+
+      - name: Laboratorio 8 - pruebas unitarias
+        working-directory: web_lab8_alimentos_del_valle
+        run: npm test
+
+      - name: Laboratorio 8 - compilar
+        working-directory: web_lab8_alimentos_del_valle
+        run: npm run build
+
+      - name: Publicar el laboratorio 8 en /lab8/
+        run: cp -r web_lab8_alimentos_del_valle/dist dist/lab8
 
       - name: Configurar Pages
         uses: actions/configure-pages@v5

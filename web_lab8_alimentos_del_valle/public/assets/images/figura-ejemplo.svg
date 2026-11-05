@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" aria-label="Espacio reservado para una figura">
+  <rect x="1" y="1" width="638" height="298" rx="12" fill="#f6f7fb" stroke="#8e8fae" stroke-width="2" stroke-dasharray="8 6"/>
+  <path d="M60 230 200 120l90 70 110-110 180 150" fill="none" stroke="#00628a" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="520" cy="80" r="26" fill="#ffdf2d"/>
+  <text x="320" y="270" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#4a4766">Reemplaza esta imagen por tu figura</text>
+</svg>

@@ -9,6 +9,13 @@ Plataforma educativa web interactiva para la **Práctica de Laboratorio N.º 07*
 
 ---
 
+## Sitios publicados
+
+* **Laboratorio 7 — Célula de Mecanizado:** https://buritica06.github.io/MEC42-Diseno-de-automatismos-de-PLC/
+* **Laboratorio 8 — Alimentos Del Valle (simulación 3D):** https://buritica06.github.io/MEC42-Diseno-de-automatismos-de-PLC/lab8/ — código en [`web_lab8_alimentos_del_valle/`](web_lab8_alimentos_del_valle/)
+
+---
+
 ## 🛠️ Características Principales
 
 1. **Gemelo Digital 3D (Three.js):**
