@@ -1,4 +1,6 @@
-# Compila con Vite y publica /dist en GitHub Pages en cada push a main.
+# Prueba y compila cada laboratorio, y publica todos en GitHub Pages en cada push a main.
+#   web_lab7_celula_mecanizado    -> raíz del sitio
+#   web_lab8_alimentos_del_valle  -> /lab8/
 # Requisito único (una sola vez): Settings → Pages → Source: "GitHub Actions".
 name: Desplegar en GitHub Pages
 
@@ -29,16 +31,19 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: |
-            package-lock.json
+            web_lab7_celula_mecanizado/package-lock.json
             web_lab8_alimentos_del_valle/package-lock.json
 
-      - name: Instalar dependencias
+      - name: Laboratorio 7 - instalar dependencias
+        working-directory: web_lab7_celula_mecanizado
         run: npm ci
 
-      - name: Pruebas unitarias (evaluador y núcleo numérico)
+      - name: Laboratorio 7 - pruebas unitarias
+        working-directory: web_lab7_celula_mecanizado
         run: npm test
 
-      - name: Compilar
+      - name: Laboratorio 7 - compilar
+        working-directory: web_lab7_celula_mecanizado
         run: npm run build
 
       - name: Laboratorio 8 - instalar dependencias
@@ -53,8 +58,10 @@ jobs:
         working-directory: web_lab8_alimentos_del_valle
         run: npm run build
 
-      - name: Publicar el laboratorio 8 en /lab8/
-        run: cp -r web_lab8_alimentos_del_valle/dist dist/lab8
+      - name: Reunir los sitios (laboratorio 7 en la raíz y laboratorio 8 en /lab8/)
+        run: |
+          cp -r web_lab7_celula_mecanizado/dist _site
+          cp -r web_lab8_alimentos_del_valle/dist _site/lab8
 
       - name: Configurar Pages
         uses: actions/configure-pages@v5
@@ -62,7 +69,7 @@ jobs:
       - name: Subir el artefacto
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: _site
 
   deploy:
     needs: build
