@@ -1,124 +1,71 @@
-# Plantilla web transversal — IUB
+# MEC42 — Célula de Mecanizado Electroneumática y Husillo Trifásico
 
-Sitio educativo listo para adaptar a **cualquier materia**, numérica o no: capítulos con navegación, barra de
-progreso, tema claro/oscuro, versión móvil, actividades con corrección inmediata y visualizaciones opcionales.
-Lleva la identidad de la Institución Universitaria de Barranquilla.
+Plataforma educativa web interactiva para la **Práctica de Laboratorio N.º 07** de la asignatura **MEC42 — Diseño de automatismos de PLC** de la **Institución Universitaria de Barranquilla (IUB)**.
 
-Lo que aparece entre `[corchetes]` es de relleno y hay que reemplazarlo.
+* **Docente:** Ing. Ricardo D. Buriticá R.
+* **Programa:** Ingeniería Mecatrónica · Facultad de Ingeniería
+* **Secuencia de control:**
+  $$\text{S1 (Marcha)} \longrightarrow A+ \longrightarrow A- \longrightarrow B- \longrightarrow A+ \longrightarrow B+ \longrightarrow \text{Motor Trifásico } M_1 \text{ (Giro Derecha CW)}$$
 
-## Crear el sitio de una materia
+---
 
-Requiere Node.js 20.19 o superior. Desde esta carpeta, en PowerShell:
+## 🛠️ Características Principales
+
+1. **Gemelo Digital 3D (Three.js):**
+   * Modelado ortogonal de los actuadores industriales: **Cilindro A monoestable** con resorte helicoidal visible, **Cilindro B biestable** con mordaza de sujeción neumática y **Husillo rotativo trifásico $M_1$** (giro horario CW).
+   * Monitoreo dinámico de sensores magnéticos Reed ($a_0, a_1, b_0, b_1$), electroválvulas ($Y_A, Y_{B+}, Y_{B-}$) y contactor $KM_1$.
+   * Simulación interactiva de **corte súbito de 24 VDC** (demostración de seguridad intrínseca: $A$ retorna por resorte a $0\text{ mm}$ mientras $B$ biestable retiene la pieza en $50\text{ mm}$) y **disparo por sobrecarga térmica RT1** (contactos 95-96).
+
+2. **Diagrama Espacio-Fase y Sincronismo Temporal (Plotly):**
+   * Gráficas sincronizadas de carrera (mm) y señales de mando (%) conmutables entre índice de fase GRAFCET y tiempo real acumulado en segundos ($T_{\text{ciclo}}$).
+
+3. **Marco Teórico y Normativa Industrial:**
+   * Diagrama GRAFCET tecnológico bajo norma internacional **IEC 60848**.
+   * Tabla de direccionamiento de entradas y salidas digitales para PLC **Siemens S7-1200** (TIA Portal).
+   * Formulación booleana Set/Reset y prevención estricta del error de **doble bobina** en Ladder ($Y_A = M_1 + M_4 + M_5 + M_6$).
+   * Protocolo de **Seguridad Eléctrica: Las 5 Reglas de Oro** (RETIE Res. 90708) y Rúbrica Oficial de Calificación (5.0 / 2.0 / 0.0).
+
+4. **Laboratorio Virtual Autoevaluable:**
+   * 8 actividades interactivas con validación inmediata, tolerancia analítica en cálculos y persistencia en `localStorage`.
+
+---
+
+## 🚀 Puesta en Marcha Local
+
+Requiere **Node.js 20+**:
 
 ```bash
-.\nueva_materia.ps1 -Nombre web_mec40_cinematica
-```
-
-Esto crea `generacion/web_mec40_cinematica/` con su propia clave de progreso; la plantilla queda intacta. Luego, en la
-carpeta nueva:
-
-```bash
+# 1. Instalar dependencias
 npm install
-```
 
-```bash
+# 2. Iniciar servidor de desarrollo
 npm run dev
+
+# 3. Ejecutar pruebas unitarias
+npm test
+
+# 4. Compilar para producción
+npm run build
 ```
 
-El sitio se abre en http://localhost:5173 y se actualiza al guardar.
+El servidor local se iniciará típicamente en `http://localhost:5173/` o `http://localhost:4173/`.
 
-## Qué editar, en orden
+---
 
-| #   | Archivo                                     | Qué contiene                                                  |
-| --- | ------------------------------------------- | ------------------------------------------------------------- |
-| 1   | `src/content/curso.js`                      | Código, asignatura, programa, docente, portada y bibliografía |
-| 2   | `src/content/capitulos.js`                  | Lista de capítulos: añade, quita o renombra                   |
-| 3   | `src/modules/NN-*/contenido.html`           | El texto de cada capítulo                                     |
-| 4   | `src/modules/NN-*/index.js`                 | Objetivos y valores iniciales de las visualizaciones          |
-| 5   | `src/modules/04-actividades/actividades.js` | Las preguntas                                                 |
+## 🌐 Despliegue en GitHub Pages
 
-Los cinco capítulos incluidos son modelos: teoría, visualizaciones, ejemplos, actividades y cierre.
+Este repositorio incluye el flujo de integración continua [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). Para habilitar el despliegue automático:
 
-## Añadir un capítulo
+1. Ve a **Settings → Pages** en el repositorio de GitHub.
+2. En **Build and deployment → Source**, selecciona **GitHub Actions**.
+3. En cada `push` a la rama `main`, la plataforma se compilará y publicará de forma automática.
 
-1. Crea `src/modules/06-mi-tema/contenido.html` y `src/modules/06-mi-tema/index.js`:
-   ```js
-   import html from './contenido.html?raw';
-   import { createChapter } from '../chapter.js';
+---
 
-   export default createChapter({ html, objetivos: ['Primer objetivo.'] });
-   ```
-2. Regístralo en `src/content/capitulos.js`. El id lleva dos dígitos, guion y minúsculas sin tildes.
+## 📚 Bibliografía de Referencia (IEEE)
 
-La navegación, la portada, el progreso y los botones anterior/siguiente se actualizan solos.
-
-## Bloques de contenido
-
-Todos aparecen funcionando en el capítulo 1; copia el que necesites.
-
-| Bloque               | Código                                                                                                       |
-| -------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Definición           | `<div class="callout callout--def" role="note">`                                                             |
-| Teorema o idea clave | `callout callout--thm`                                                                                       |
-| Enunciado de ejemplo | `callout callout--ex`                                                                                        |
-| Advertencia          | `callout callout--warn`                                                                                      |
-| Tabla                | `<div class="table-wrap"><table>…`                                                                           |
-| Figura               | `<figure class="figura"><img src="./assets/images/x.png" alt="…">` (la imagen va en `public/assets/images/`) |
-| Video                | `<div class="video-wrap"><iframe …>`                                                                         |
-| Desplegable          | `<details class="disclosure">`                                                                               |
-| Fórmula (opcional)   | `\( en línea \)` y `\[ en bloque \]`; dentro de ellas, `<` se escribe `&lt;`                                 |
-
-## Actividades
-
-Cuatro tipos, definidos en `actividades.js`:
-
-| `tipo`     | Uso                                           | Corrección                                  |
-| ---------- | --------------------------------------------- | ------------------------------------------- |
-| `opcion`   | Una o varias respuestas correctas             | Automática                                  |
-| `texto`    | Término o palabra clave                       | Automática; ignora mayúsculas y tildes      |
-| `numerica` | Cálculo; admite expresiones como `log(2)/0.3` | Automática, 0.5 % de tolerancia por defecto |
-| `abierta`  | Desarrollo o reflexión                        | Autoevaluación con respuesta modelo         |
-
-Para usarlas en otro capítulo: `setup: montarActividades(LISTA)`. Cada `id` (`ej-N`) debe ser único y no cambiar
-después de publicar. El progreso se guarda solo en el navegador del estudiante: **no es una calificación y el
-docente no lo recibe**.
-
-## Visualizaciones
-
-Se insertan con `<div data-viz="nombre" data-preset="clave"></div>` y se configuran en los `presets` del `index.js`
-del capítulo. Las que un capítulo no use no se descargan, así que no hace falta borrarlas.
-
-| Nombre           | Sirve para                                  | Parámetros del preset                                                                 |
-| ---------------- | ------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `graficaDatos`   | Barras, líneas o sectores con datos propios | `tipo`, `titulo`, `ejeX`, `ejeY`, `etiquetas`, `series`                               |
-| `graficaFuncion` | `y = f(x)` con parámetros `a` y `b`         | `expresion`, `a`, `b`, `xMin`, `xMax`, `muestras`, `estilo`, `titulo`, `ejeX`, `ejeY` |
-| `superficie3D`   | `z = f(x, y)` que se puede rotar            | `expresion`, `a`, `b`, `rango`, `altura`, `ejeX`, `ejeY`, `ejeZ`                      |
-
-El preset también admite `titulo` y `descripcion` del bloque, y `hideControls: ['a']` para ocultar controles. Una
-visualización nueva, propia de una materia, se añade como archivo en `src/viz/` y una entrada en `src/viz/registry.js`;
-`web_ecuaciones_vite` (plano z, lugar de raíces, Bode) sirve de ejemplo porque usa el mismo motor.
-
-## Publicar
-
-Comprueba antes que no quede ningún `[corchete]`.
-
-**En el hub `control-digital-web`:** añade una entrada con `"tipo": "vite"` a la lista `paginas` de
-`src/sincronizar_web_repo.py`, como la de `web_ecuaciones_vite`, y ejecuta el script. Con `--sin-publicar` solo
-actualiza el hub local, sin commit ni push.
-
-**En un repositorio propio:** sube la carpeta como raíz del repositorio y, en GitHub, elige _Settings → Pages →
-Source: GitHub Actions_. El flujo `.github/workflows/deploy.yml` prueba, compila y publica en cada push a `main`.
-
-## Comandos
-
-| Comando                           | Qué hace                                 |
-| --------------------------------- | ---------------------------------------- |
-| `npm run dev`                     | Servidor de desarrollo                   |
-| `npm run build`                   | Sitio optimizado en `dist/`              |
-| `npm run preview`                 | Sirve `dist/` para revisarlo             |
-| `npm test`                        | Pruebas del evaluador y de la corrección |
-| `npm run lint` / `npm run format` | ESLint / Prettier                        |
-
-## Identidad visual
-
-Colores, tipografía y espaciado están en `src/styles/theme.css`. El logo está en `public/assets/images/`.
+1. International Electrotechnical Commission, *IEC 60848:2013 — GRAFCET specification language for sequential function charts*, 3.ª ed. Ginebra, Suiza: IEC, 2013.
+2. International Electrotechnical Commission, *IEC 61131-3:2013 — Programmable controllers — Part 3: Programming languages*, 3.ª ed. Ginebra, Suiza: IEC, 2013.
+3. Ministerio de Minas y Energía de Colombia, *Reglamento Técnico de Instalaciones Eléctricas (RETIE) — Resolución 90708 de 2013, Art. 18: Reglas de oro de la seguridad eléctrica*. Bogotá: MinMinas, 2013.
+4. R. Piedrafita Moreno, *Ingeniería de la automatización industrial*, 2.ª ed. Madrid: Ra-Ma Editorial, 2004.
+5. Festo Didactic SE, *Electroneumática — Nivel Básico TP 201: Manual de estudio y ejercicios*. Denkendorf, Alemania: Festo Didactic, 2015.
