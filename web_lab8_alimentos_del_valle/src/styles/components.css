@@ -330,10 +330,11 @@
 }
 .prose > .viz,
 .prose > .wide {
+  /* Centrado con margen: la animación de aparición de GSAP reemplaza cualquier transform. */
+  --ancho-amplio: min(var(--wide-w), calc(100vw - var(--sidebar-w) - 2 * var(--space-6)));
   max-width: none;
-  width: min(var(--wide-w), calc(100vw - var(--sidebar-w) - 2 * var(--space-6)));
-  margin-left: 50%;
-  transform: translateX(-50%);
+  width: var(--ancho-amplio);
+  margin-left: calc((100% - var(--ancho-amplio)) / 2);
 }
 @media (max-width: 899px) {
   .prose > .viz,
