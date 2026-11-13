@@ -1,0 +1,61 @@
+<p>
+  La escena reproduce el plano de automatización con la mesa de seis cunas: carga a 210°, taladrado (F, G) a 270°,
+  asiento (H, I) a 330°, desbarbado (J, K) a 30°, espera a 90° y descarga a 150°. Cada ciclo la mesa indexa 60°, de
+  modo que cada pieza pasa por las tres estaciones antes de volver a la cinta 2.
+</p>
+
+<div data-viz="giroTemporizado3D" data-preset="estacion"></div>
+
+<h2 id="uso">Cómo usar la simulación</h2>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Acción</th>
+        <th scope="col">Panel</th>
+        <th scope="col">Teclado (foco en la escena)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Poner en marcha (incluye la reposición inicial y la lubricación de 3 s)</td>
+        <td>MARCHA: iniciar</td>
+        <td>Espacio</td>
+      </tr>
+      <tr>
+        <td>Parar al terminar el ciclo vigente</td>
+        <td>PARADA: fin de ciclo</td>
+        <td>Esc</td>
+      </tr>
+      <tr>
+        <td>Accionar o liberar la seta de emergencia</td>
+        <td>ESTOP: activar o liberar</td>
+        <td>E</td>
+      </tr>
+      <tr>
+        <td>Pausar, reanudar o reiniciar la simulación</td>
+        <td>Pausar o reanudar · Reiniciar planta</td>
+        <td>P · 0</td>
+      </tr>
+      <tr>
+        <td>Girar, acercar y recentrar la cámara</td>
+        <td>Arrastrar, rueda o pellizco · Vistas</td>
+        <td>Flechas, + y −, R</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="callout callout--ex" role="note">
+  <span class="callout__title">Prueba de la verificación en vivo</span>
+  <ol>
+    <li>Pulsa MARCHA y comprueba que <code>MARCHA_MEM</code> espera los 3.0 s de lubricación.</li>
+    <li>Observa en el paso 5 → 6 la convergencia en Y (etapas 7w y 8w) antes del retorno total.</li>
+    <li>Acciona ESTOP durante el giro (paso 3 → 4): el piloto morado <code>H_VENTOSA</code> se mantiene.</li>
+    <li>Libera ESTOP y pulsa MARCHA: A y C suben antes de que B y D regresen; luego se depositan las piezas.</li>
+  </ol>
+</div>
+<p>
+  Los LED verdes indican sensores activos; los ámbar, salidas del PLC; el morado, las ventosas memorizadas. La baliza
+  del gabinete muestra producción (verde), espera (ámbar) o falla y parada pendiente de reposición (rojo).
+</p>

@@ -1,0 +1,51 @@
+<p>
+  El diagrama espacio-fase describe la posición de cada actuador en los siete instantes del ciclo (pasos 1 a 7 = 1).
+  Las rampas son carreras de cilindro; los flancos verticales, señales discretas (ventosas y barrido). Selecciona un
+  intervalo para resaltar los movimientos que intervienen y su condición de fin de fase.
+</p>
+
+<div class="diagrama" data-diagrama="espacio-fase" aria-label="Diagrama espacio-fase interactivo"></div>
+
+<h2 id="lectura">Lectura del diagrama</h2>
+<ul>
+  <li>
+    <strong>Simultaneidad en 3 → 4 y 4 → 5:</strong> el giro \(E+\) coincide con el avance de los carros \(B+, D+\), y
+    el bloqueo \(E-\) con la colocación \(A+, C+\). Las transiciones exigen todos los finales de carrera a la vez
+    (\(S_{10} \cdot S_4 \cdot S_8\) y \(S_9 \cdot S_2 \cdot S_6\)).
+  </li>
+  <li>
+    <strong>Paralelismo en Y en 5 → 6:</strong> el retorno vertical \(A-, C-\) (etapas 7 → 7w) y el mecanizado \(F+
+    \dots K+\) con barrido (etapas 8 → 8w) avanzan de forma independiente y se sincronizan con
+    \(0.4\ \text{s}/(X_{7w} \cdot X_{8w})\).
+  </li>
+  <li>
+    <strong>Ventosas memorizadas:</strong> \(V\) se activa con \(\text{S}\) en la etapa 2 y se desactiva con \(\text{R}\)
+    en la 6; su estado remanente permite conservar las piezas durante una emergencia.
+  </li>
+</ul>
+
+<h2 id="grafcet">Correspondencia con el GRAFCET de producción</h2>
+<div class="table-wrap">
+  <table>
+    <caption>Etapas de GP, acciones y receptividades</caption>
+    <thead>
+      <tr>
+        <th scope="col">Etapa</th>
+        <th scope="col">Acción</th>
+        <th scope="col">Receptividad de salida</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>Reposo</td><td>MARCHA_MEM · S_CINTA1 · B1 · B3 · S1 · S3 · M_HAB</td></tr>
+      <tr><td>1</td><td>Y1+ (A+, C+)</td><td>S2 · S6 (B2)</td></tr>
+      <tr><td>2</td><td>S V_SUCCION</td><td>0.3 s / X2</td></tr>
+      <tr><td>3</td><td>Y1− (A−, C−)</td><td>S1 · S5 (B1)</td></tr>
+      <tr><td>4</td><td>Y3+ (E+) ∥ Y2+ (B+, D+)</td><td>S10 · S4 · S8 (S2 · B4)</td></tr>
+      <tr><td>5</td><td>Y3− (E−) ∥ Y1+ (A+, C+)</td><td>S9 · S2 · S6 (S1 · B2)</td></tr>
+      <tr><td>6</td><td>R V_SUCCION</td><td>0.2 s / X6 → divergencia en Y</td></tr>
+      <tr><td>7 · 7w</td><td>Y1− (A−, C−) · espera</td><td>S1 · S5 (B1)</td></tr>
+      <tr><td>8 · 8w</td><td>Y4, H_G … H_K, Y_BARRIDO</td><td>S12 … S22 (B5)</td></tr>
+      <tr><td>9</td><td>Y4 = 0, Y2− (B−, D−), Y_BARRIDO</td><td>S11 … S21 · S3 · S7 (S3 · B3)</td></tr>
+    </tbody>
+  </table>
+</div>

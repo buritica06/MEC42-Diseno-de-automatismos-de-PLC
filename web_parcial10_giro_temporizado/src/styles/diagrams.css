@@ -1,0 +1,347 @@
+﻿/* ==========================================================================
+   diagrams.css — Diagrama espacio-fase y barra de fases de la escena 3D
+   Todos los colores salen de los tokens --viz-* y --color-* (claro/oscuro).
+   ========================================================================== */
+
+/* ── Bloques en dos columnas que pasan a una en pantallas estrechas ── */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: var(--space-4);
+  margin: var(--space-5) 0;
+}
+.grid-2 > .callout {
+  margin: 0;
+}
+.callout ul,
+.callout ol {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+/* ── Escena 3D: altura fija en escritorio; el panel lateral se desplaza por dentro ──
+   Así el lienzo nunca se estira con la cantidad de controles ni cambia de proporción. */
+@media (min-width: 1024px) {
+  .viz__body {
+    --alto-escena: clamp(480px, calc(100vh - 220px), 700px);
+    align-items: start;
+  }
+  .viz__stage--tall {
+    min-height: 0;
+    height: var(--alto-escena);
+  }
+  .viz__aside {
+    height: var(--alto-escena);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+}
+
+/* Tableta y móvil: la escena cabe completa en la pantalla junto con la cabecera. */
+@media (max-width: 1023px) {
+  .viz__stage--tall {
+    aspect-ratio: auto;
+    height: min(calc(100svh - 150px), 120vw, 640px);
+    min-height: 340px;
+  }
+}
+
+/* ── Barra de fases bajo la escena 3D ── */
+.viz__steps {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--space-2);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.viz__step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  font-size: var(--fs-xs);
+  line-height: 1.3;
+  min-width: 0;
+  transition:
+    background var(--dur-med) var(--ease-out),
+    border-color var(--dur-med) var(--ease-out),
+    transform var(--dur-med) var(--ease-out);
+}
+.viz__step strong {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+}
+.viz__step span {
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+.viz__step[aria-current='step'] {
+  border-color: var(--color-primary);
+  background: var(--callout-def);
+  transform: translateY(-2px);
+}
+.viz__step[aria-current='step']::after {
+  content: '';
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: -1px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--color-primary);
+}
+@media (max-width: 760px) {
+  .viz__steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ── Contenedor común de los diagramas ── */
+.prose > .diagrama {
+  --ancho-amplio: min(var(--wide-w), calc(100vw - var(--sidebar-w) - 2 * var(--space-6)));
+  width: var(--ancho-amplio);
+  margin-left: calc((100% - var(--ancho-amplio)) / 2);
+}
+@media (max-width: 899px) {
+  .prose > .diagrama {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+.diagrama {
+  margin: var(--space-6) 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.diagrama__barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.diagrama__lienzo {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  background: var(--viz-bg);
+  -webkit-overflow-scrolling: touch;
+}
+.diagrama__svg {
+  min-width: 720px; /* bajo este ancho el texto dejaría de ser legible: se desplaza el lienzo, no la página */
+  padding: var(--space-3) var(--space-2);
+}
+.diagrama__svg svg {
+  width: 100%;
+  height: auto;
+  font-family: var(--font-sans);
+}
+.diagrama__nota {
+  display: none;
+  margin: 0;
+  padding: var(--space-2) var(--space-4) 0;
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+}
+@media (max-width: 820px) {
+  .diagrama__nota {
+    display: block;
+  }
+}
+
+/* Botones segmentados */
+.seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  padding: 3px;
+  gap: 3px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+}
+.seg__btn {
+  min-height: 36px;
+  padding: var(--space-1) var(--space-4);
+  border: 0;
+  border-radius: calc(var(--radius-md) - 3px);
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast),
+    color var(--dur-fast);
+}
+.seg__btn[aria-pressed='true'] {
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Espacio-fase ── */
+.ef__banda rect {
+  fill: transparent;
+  stroke: transparent;
+  cursor: pointer;
+  transition: fill var(--dur-med) var(--ease-out);
+}
+.ef__banda:hover rect {
+  fill: color-mix(in srgb, var(--viz-series-1) 6%, transparent);
+}
+.ef__banda.is-activa rect {
+  fill: color-mix(in srgb, var(--viz-series-1) 12%, transparent);
+  stroke: color-mix(in srgb, var(--viz-series-1) 45%, transparent);
+}
+.ef__banda:focus-visible {
+  outline: none;
+}
+.ef__banda:focus-visible rect {
+  stroke: var(--color-focus);
+  stroke-width: 2;
+}
+.ef__banda-txt {
+  font-size: 13px;
+  font-weight: 700;
+  fill: var(--viz-text);
+  pointer-events: none;
+}
+.ef__paso {
+  stroke: var(--viz-grid-strong);
+  stroke-dasharray: 2 4;
+}
+.ef__paso-num {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--viz-axis);
+}
+.ef__nivel {
+  stroke: var(--viz-grid);
+}
+.ef__nivel--1 {
+  stroke-dasharray: 1 3;
+}
+.ef__id {
+  font-size: 14px;
+  font-weight: 800;
+  fill: var(--c);
+}
+.ef__nombre,
+.ef__sensor {
+  font-size: 12px;
+  fill: var(--viz-text);
+  opacity: 0.85;
+}
+.ef__sensor {
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.ef__traza {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 2.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  transition:
+    stroke-width var(--dur-med),
+    opacity var(--dur-med);
+}
+.ef__punto {
+  fill: var(--viz-bg);
+  stroke: var(--c);
+  stroke-width: 2;
+}
+.ef__fila {
+  transition: opacity var(--dur-med) var(--ease-out);
+}
+.ef__fila:not(.is-activa) {
+  opacity: 0.42;
+}
+.ef__fila.is-activa .ef__traza {
+  stroke-width: 3.4;
+}
+.ef__cursor {
+  stroke: var(--viz-accent);
+  stroke-width: 2.5;
+  pointer-events: none;
+}
+/* Trazado progresivo al entrar en pantalla */
+.ef--oculto .ef__traza {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.ef--dibujar .ef__traza {
+  stroke-dasharray: 1;
+  animation: ef-dibujo 1.4s var(--ease-out) forwards;
+}
+@keyframes ef-dibujo {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.ef__detalle {
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+.ef__detalle-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+.ef__chip {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  padding: 2px var(--space-3);
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+.ef__dur {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.ef__dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: var(--space-3) var(--space-5);
+  margin: 0;
+}
+.ef__dl dt {
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+.ef__dl dd {
+  margin: 2px 0 0;
+  font-size: var(--fs-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ef--oculto .ef__traza {
+    stroke-dashoffset: 0;
+  }
+}

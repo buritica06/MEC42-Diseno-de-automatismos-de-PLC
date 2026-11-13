@@ -1,0 +1,34 @@
+<p>
+  La <strong>estación automática de giro temporizado</strong> es una mesa revólver indexada que taladra, avellana y
+  desbarba cada pieza en tres puestos simultáneos. La cinta 1 la alimenta, la cinta 2 la descarga y dos transportes con
+  ventosas cargan y descargan la mesa en cada ciclo. El automatismo se modela con <strong>GRAFCET IEC 60848</strong> y
+  la <strong>Guía GEMMA</strong>, y se implementa en un PLC <strong>Siemens S7-1200</strong>.
+</p>
+
+<div class="callout callout--def" role="note">
+  <span class="callout__title">Objetivo técnico</span>
+  <p>
+    Ciclo de \(6.6\ \text{s}\) tras \(3.0\ \text{s}\) de lubricación, sin colisiones, con ventosas retenidas en
+    emergencia y reposición que devuelve \(A, C\) antes que \(B, D\).
+  </p>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <caption>Subsistemas y equivalencia en el banco de cuatro cilindros</caption>
+    <thead>
+      <tr>
+        <th scope="col">Subsistema</th>
+        <th scope="col">Planta</th>
+        <th scope="col">Banco</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Transportes (vertical)</td><td>A, C + ventosas</td><td>Cil. 1 · Y1±</td></tr>
+      <tr><td>Transportes (carros)</td><td>B, D</td><td>Cil. 2 · Y2±</td></tr>
+      <tr><td>Mesa revólver</td><td>E giro / bloqueo</td><td>Cil. 3 · Y3±</td></tr>
+      <tr><td>Mecanizado</td><td>F … K</td><td>Cil. 4 · Y4 + pilotos</td></tr>
+      <tr><td>Auxiliares</td><td>M_LUB, Y_BARRIDO, S_C1</td><td>KM_LUB, válvula 3/2, S_CINTA1</td></tr>
+    </tbody>
+  </table>
+</div>

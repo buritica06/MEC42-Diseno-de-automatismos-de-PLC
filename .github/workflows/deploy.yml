@@ -1,6 +1,7 @@
 # Prueba y compila cada laboratorio, y publica todos en GitHub Pages en cada push a main.
 #   web_lab7_celula_mecanizado    -> raíz del sitio
 #   web_lab8_alimentos_del_valle  -> /lab8/
+#   web_parcial10_giro_temporizado -> /parcial10/
 # Requisito único (una sola vez): Settings → Pages → Source: "GitHub Actions".
 name: Desplegar en GitHub Pages
 
@@ -33,6 +34,7 @@ jobs:
           cache-dependency-path: |
             web_lab7_celula_mecanizado/package-lock.json
             web_lab8_alimentos_del_valle/package-lock.json
+            web_parcial10_giro_temporizado/package-lock.json
 
       - name: Laboratorio 7 - instalar dependencias
         working-directory: web_lab7_celula_mecanizado
@@ -58,10 +60,23 @@ jobs:
         working-directory: web_lab8_alimentos_del_valle
         run: npm run build
 
-      - name: Reunir los sitios (laboratorio 7 en la raíz y laboratorio 8 en /lab8/)
+      - name: Parcial 10 - instalar dependencias
+        working-directory: web_parcial10_giro_temporizado
+        run: npm ci
+
+      - name: Parcial 10 - pruebas unitarias
+        working-directory: web_parcial10_giro_temporizado
+        run: npm test
+
+      - name: Parcial 10 - compilar
+        working-directory: web_parcial10_giro_temporizado
+        run: npm run build
+
+      - name: Reunir los sitios (lab 7 en la raíz, lab 8 en /lab8/ y parcial 10 en /parcial10/)
         run: |
           cp -r web_lab7_celula_mecanizado/dist _site
           cp -r web_lab8_alimentos_del_valle/dist _site/lab8
+          cp -r web_parcial10_giro_temporizado/dist _site/parcial10
 
       - name: Configurar Pages
         uses: actions/configure-pages@v5
