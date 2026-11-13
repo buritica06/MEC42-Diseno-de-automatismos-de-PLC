@@ -1,0 +1,85 @@
+<p>
+  La estación realiza el <strong>pesaje automatizado</strong> y la <strong>clasificación por tolerancia</strong> de piezas cilíndricas procedentes de una línea de mecanizado. Un PLC Siemens SIMATIC S7-1200 coordina cuatro cilindros electroneumáticos Festo a 6 bar, una báscula con bloqueo mecánico de seguridad y una cinta de evacuación temporizada.
+</p>
+
+<div class="dato-grid">
+  <div class="dato"><strong>6 bar</strong><span>Presión de trabajo (Festo)</span></div>
+  <div class="dato"><strong>S4</strong><span>Conmutador de tolerancia (simula la báscula)</span></div>
+  <div class="dato"><strong>3 s (T1)</strong><span>Tiempo de pesaje libre</span></div>
+  <div class="dato"><strong>11 etapas</strong><span>GRAFCET GP (Divergencia OR)</span></div>
+</div>
+
+<h2 id="actuadores">Actuadores y Tecnología Neumática</h2>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Tag</th>
+        <th scope="col">Actuador</th>
+        <th scope="col">Tecnología y válvula</th>
+        <th scope="col">Reposo</th>
+        <th scope="col">Función en el ciclo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>A</strong></td>
+        <td>Cilindro de alimentación</td>
+        <td>Doble efecto · 5/2 biestable (\(Y1 / Y2\))</td>
+        <td>Retraído (\(B1=1\))</td>
+        <td>Empuja la pieza desde el transportador de rodillos hasta la báscula.</td>
+      </tr>
+      <tr>
+        <td><strong>B</strong></td>
+        <td>Cilindro de bloqueo de báscula</td>
+        <td>Doble efecto · 5/2 monoestable (\(Y3\))</td>
+        <td><strong>Extendido</strong> (\(B4=1\))</td>
+        <td>Bloquea mecánicamente la báscula; se retrae (\(B3=1\)) solo durante el pesaje.</td>
+      </tr>
+      <tr>
+        <td><strong>C</strong></td>
+        <td>Cilindro de clasificación OK</td>
+        <td>Doble efecto · 5/2 monoestable (\(Y4\))</td>
+        <td>Retraído (\(S1=1\))</td>
+        <td>Su empujador en U devuelve la pieza dentro de tolerancia (\(S4=1\)) a la línea, de donde la evacúa la cinta.</td>
+      </tr>
+      <tr>
+        <td><strong>D</strong></td>
+        <td>Cilindro de rechazo NOK</td>
+        <td>Simple efecto (muelle) · 3/2 NC (\(Y5\))</td>
+        <td>Retraído (\(S2=1\))</td>
+        <td>Expulsa la pieza fuera de tolerancia (\(\overline{S4}\)) hacia la canaleta de descarte.</td>
+      </tr>
+      <tr>
+        <td><strong>H1</strong></td>
+        <td>Motor de cinta de evacuación</td>
+        <td>Lámpara de 24 V DC que simula el motor (salida \(\%Q0.5\))</td>
+        <td>Detenido</td>
+        <td>Evacua las piezas conformes hasta el sensor \(S5\) más temporización \(T2 = 2\text{ s}\).</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="callout callout--thm" role="note">
+  <span class="callout__title">Condición inicial invertida de B y seguridad positiva</span>
+  <p>
+    En reposo, la vía \(1 \to 2\) de la válvula monoestable de \(B\) alimenta la cámara del émbolo: sin tensión en \(Y3\), el cilindro queda extendido (\(B4 = 1\)) y la báscula permanece bloqueada, condición segura ante un corte eléctrico. Además, el pulsador de paro de fin de ciclo \(S6\) se cablea normalmente cerrado (NC): la rotura del cable produce la misma reacción que la orden de paro (seguridad positiva). \(S6\) <strong>no</strong> es una parada de emergencia: ante un riesgo se corta la alimentación de aire y de energía.
+  </p>
+</div>
+
+<h2 id="secuencia-resumen">Lógica Secuencial y Selección de Ruta</h2>
+<p>
+  El automatismo implementa una <strong>máquina de estados en SCL</strong> derivada de un GRAFCET normalizado (IEC 60848). Tras cargar la pieza (\(A+\)) y liberar la plataforma (\(B-\)), el temporizador TON \(T1\) fija 3 segundos de pesaje estable. En la etapa 4, el cilindro \(B\) vuelve a extenderse (\(B4=1\)) y una <strong>divergencia en OR mutuamente excluyente</strong> evalúa el contacto de tolerancia \(S4\):
+</p>
+<ul>
+  <li><strong>Ruta conforme (\(S4 = 1\)):</strong> avanza \(C+\) hasta \(B5\) y su empujador en U devuelve la pieza a la línea; \(C\) retorna por muelle hasta \(S1\), se incrementa \(C\_OK\) y la cinta \(H1\) evacúa la pieza hasta la fotocélula \(S5\) y durante \(T2 = 2\text{ s}\) más.</li>
+  <li><strong>Ruta no conforme (\(\overline{S4}\)):</strong> avanza el cilindro \(D+\) expulsando la pieza a la canaleta de descarte y retorna por muelle \(D-\), incrementando el contador \(C\_NOK\).</li>
+</ul>
+
+<h2 id="recorrido">Estructura del Sitio Interactivo</h2>
+<ol>
+  <li><a href="#/capitulo/02-simulacion"><strong>Plano de situación en 3D</strong></a>: modelo interactivo de la lámina 1 (misma disposición que el plano isométrico y la vista en planta de la guía) con cilindros sujetos por mordazas, báscula con indicador y tendencia, panel de E/S del S7-1200, pruebas de seguridad e inyección de fallas.</li>
+  <li><a href="#/capitulo/03-fases"><strong>Diagrama de fases</strong></a>: representación espacio-fase VDI 3260 con la divergencia OR y condición invertida de B.</li>
+  <li><a href="#/capitulo/04-gantt"><strong>Diagrama de Gantt</strong></a>: planificación de las 4 horas de laboratorio y cronograma temporal del ciclo de la máquina.</li>
+</ol>

@@ -1,0 +1,80 @@
+<div data-viz="estacionPeso3D" data-preset="estacion"></div>
+
+<h2 id="controles">Controles y operación de la estación</h2>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Acción</th>
+        <th scope="col">Panel lateral</th>
+        <th scope="col">Teclado (foco en la escena 3D)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Marcha (S0, NA)</strong> / pausa de la simulación</td>
+        <td>S0: marcha · Pausar / reanudar simulación</td>
+        <td><kbd>Espacio</kbd></td>
+      </tr>
+      <tr>
+        <td><strong>Paro de fin de ciclo (S6, NC)</strong></td>
+        <td>S6: paro de fin de ciclo (alterna pulsado / suelto)</td>
+        <td><kbd>6</kbd></td>
+      </tr>
+      <tr>
+        <td><strong>Reinicio de la estación</strong> (etapa 0, actuadores a reposo, contadores a cero)</td>
+        <td>Reiniciar estación</td>
+        <td><kbd>0</kbd></td>
+      </tr>
+      <tr>
+        <td><strong>Puesta a cero de contadores</strong> (\(\texttt{Reset\_Conteo}\), %M10.0)</td>
+        <td>Reset_Conteo (%M10.0)</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><strong>Señal de tolerancia S4</strong></td>
+        <td>Báscula simulada · Conmutador S4 = 1 · Conmutador S4 = 0</td>
+        <td><kbd>T</kbd> (alterna S4 = 1 / S4 = 0)</td>
+      </tr>
+      <tr>
+        <td><strong>Reconocer alarma</strong> de vigilancia</td>
+        <td>Pruebas y fallas · Reconocer alarma</td>
+        <td><kbd>A</kbd></td>
+      </tr>
+      <tr>
+        <td><strong>Velocidad de simulación</strong></td>
+        <td>Ajustes · Velocidad (0.25× a 3×)</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><strong>Cámara</strong></td>
+        <td>Arrastre con el ratón · rueda de zoom</td>
+        <td><kbd>Flechas</kbd>, <kbd>+</kbd>, <kbd>−</kbd>, <kbd>R</kbd> (recentrar)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p>
+  La escena reproduce la disposición del plano de situación y de la vista en planta de la guía: el alimentador llega por detrás hasta el centro de la carcasa; \(A\) empuja la pieza hasta la báscula; el pasador de \(B\) entra en el bloque de enclavamiento bajo la palanca de la báscula; \(C\) arrastra el empujador en U para devolver la pieza OK a la línea, de donde la cinta \(H1\) la evacúa, y \(D\) la expulsa a la canaleta de descarte. Cada cilindro está sujeto por dos mordazas (soportes de brida) y su camisa se ilumina mientras su solenoide está energizado.
+</p>
+
+<h2 id="casos-validar">Pruebas de la tabla de resultados de la guía</h2>
+<ol>
+  <li><strong>Arranque con condiciones iniciales:</strong> con \(B1 \cdot B4 \cdot S1 \cdot S2\) y sin orden de paro, pulse \(S0\): la estación pasa a la etapa 1.</li>
+  <li><strong>Ciclo con \(S4 = 1\):</strong> elija <em>Conmutador S4 = 1</em>. \(C\) actúa, \(H1\) funciona hasta \(S5\) más \(2\text{ s}\) y \(\texttt{PiezasOK}\) aumenta en 1.</li>
+  <li><strong>Ciclo con \(S4 = 0\):</strong> elija <em>Conmutador S4 = 0</em>. \(D\) expulsa la pieza a la canaleta y \(\texttt{PiezasNOK}\) aumenta en 1.</li>
+  <li><strong>Tiempo de pesaje \(t_1\):</strong> observe \(\texttt{T1\_Pesaje.ET}\) y el indicador: \(3.0\text{ s}\) con \(B\) retraído.</li>
+  <li><strong>\(S6\) pulsado en la etapa 3 (o en cualquier otra):</strong> el ciclo en curso termina y la estación se detiene en la etapa 0.</li>
+  <li><strong>Cable de \(S6\) desconectado:</strong> active <em>Rotura del cable de S6</em>; no arranca un nuevo ciclo.</li>
+  <li><strong>Corte de tensión de mando:</strong> active <em>Corte de tensión de mando</em>; todas las salidas caen a 0, \(B\) queda extendido (báscula bloqueada) y \(C\) y \(D\) retornan por muelle. Al restablecerla, la CPU arranca de nuevo en las etapas 0 y 20.</li>
+  <li><strong>\(\texttt{Reset\_Conteo}\):</strong> ambos contadores vuelven a cero.</li>
+</ol>
+
+<h2 id="fallas">Vigilancia por etapa e inyección de fallas</h2>
+<p>
+  Siguiendo la cuestión 7 de la guía, cada etapa con movimiento tiene un temporizador de vigilancia de \(5\text{ s}\): si el actuador no alcanza su detector (o \(S5\) no detecta la pieza en la cinta), se señaliza una alarma, la baliza roja parpadea y el GRAFCET permanece en la etapa, sin alterar la secuencia. Use las casillas de <em>Atasco del cilindro A, B, C o D</em> y <em>Falla de la fotocélula S5</em> para provocarla; al retirar la falla la secuencia continúa y la alarma se borra con <em>Reconocer alarma</em>.
+</p>
+<p class="nota">
+  <strong>Código de colores:</strong> LED verdes = detectores activos (%I); LED ámbar = salidas activas del S7-1200 (%Q); baliza verde = ciclo en curso, ámbar = marcha habilitada en reposo, roja = paro (fija) o alarma (intermitente). La báscula muestra la lectura, el estado de \(S4\) y la tendencia de los últimos \(16\text{ s}\) con la banda de tolerancia.
+</p>

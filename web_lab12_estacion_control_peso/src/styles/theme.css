@@ -1,0 +1,171 @@
+/* ==========================================================================
+   theme.css — Tokens de diseño (paleta, tipografía, espaciado)
+   --------------------------------------------------------------------------
+   Identidad: Institución Universitaria de Barranquilla (Manual Visual IUB,
+   framework_iub/beamerthemeiub.sty): oscuro #121023, amarillo #FFDF2D,
+   azul #00ADE7, naranja #E39037, verde #3B9C6D.
+
+   Accesibilidad (WCAG 2.1 AA) — contrastes calculados con la fórmula de
+   luminancia relativa de WCAG (texto ≥ 4.5:1; objetos gráficos ≥ 3:1):
+     Tema claro (fondo #FFFFFF; superficie #F6F7FB)
+       --color-text        #1A1733  → 17.3:1  ✔
+       --color-text-muted  #4A4766  →  8.8:1 (8.2:1 sobre superficie)  ✔
+       --color-primary     #00628A  →  6.7:1 (6.3:1 sobre superficie)  ✔ azul IUB oscurecido
+       --color-accent-ink  #8A4A0B  →  6.9:1  ✔ naranja IUB oscurecido
+       --color-success / --color-danger → 6.5:1 / 6.6:1  ✔
+     Tema oscuro (fondo #121023; superficie #1A1732)
+       --color-text        #F2F1FA  → 16.7:1  ✔
+       --color-text-muted  #B9B6D3  →  9.5:1 (8.8:1 sobre superficie)  ✔
+       --color-primary     #4FC6F0  →  9.5:1 (8.8:1 sobre superficie)  ✔
+       --color-accent-ink  #FFDF2D  → 14.1:1  ✔
+   El amarillo IUB nunca se usa como texto sobre blanco (1.3:1 ✘); solo como
+   fondo con texto oscuro (#121023 sobre #FFDF2D → 14.1:1 ✔).
+
+   Paleta de gráficas: Okabe–Ito (segura para daltonismo). En tema claro,
+   las series 4 y 5 se oscurecen (los originales #CC79A7 y #E69F00 dan 3.0:1 y
+   2.2:1 sobre el fondo); en tema oscuro se usan variantes claras (≥ 7.8:1).
+   Contraste de las series sobre --viz-bg: claro 5.0 / 3.7 / 3.3 / 4.8 / 4.7;
+   oscuro 8.3 / 8.5 / 8.7 / 7.8 / 14.5.
+   ========================================================================== */
+
+:root {
+  /* Marca IUB (valores originales) */
+  --iub-oscuro: #121023;
+  --iub-amarillo: #ffdf2d;
+  --iub-azul: #00ade7;
+  --iub-naranja: #e39037;
+  --iub-verde: #3b9c6d;
+
+  /* Tipografía */
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --fs-xs: 0.75rem; /* 12 px */
+  --fs-sm: 0.875rem; /* 14 px */
+  --fs-md: 1rem; /* 16 px */
+  --fs-lg: 1.125rem; /* 18 px */
+  --fs-xl: 1.375rem; /* 22 px */
+  --fs-2xl: 1.75rem; /* 28 px */
+  --fs-3xl: clamp(1.9rem, 1.2rem + 2.6vw, 2.75rem);
+  --lh-body: 1.65;
+  --lh-tight: 1.2;
+
+  /* Espaciado (escala 4/8/12/16/24/32/48/64) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Formas y capas */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --header-h: 64px;
+  --sidebar-w: 288px;
+  --content-w: 880px;
+  --wide-w: 1180px;
+  --z-header: 50;
+  --z-drawer: 60;
+  --z-skip: 100;
+
+  /* Movimiento */
+  --dur-fast: 0.2s;
+  --dur-med: 0.4s;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  color-scheme: light;
+
+  /* ── Tema claro (por defecto) ── */
+  --color-bg: #ffffff;
+  --color-surface: #f6f7fb;
+  --color-surface-2: #eceef6;
+  --color-border: #d8dae6;
+  --color-text: #1a1733;
+  --color-text-muted: #4a4766;
+  --color-primary: #00628a;
+  --color-primary-strong: #004e6e;
+  --color-on-primary: #ffffff;
+  --color-accent: var(--iub-amarillo);
+  --color-on-accent: #121023;
+  --color-accent-ink: #8a4a0b;
+  --color-success: #1e6b47;
+  --color-warning: #8a4a0b;
+  --color-danger: #b42318;
+  --color-focus: #0b74d1;
+  --color-header-bg: #121023;
+  --color-header-text: #ffffff;
+  --shadow-sm: 0 1px 2px rgba(18, 16, 35, 0.06), 0 1px 3px rgba(18, 16, 35, 0.08);
+  --shadow-md: 0 6px 20px rgba(18, 16, 35, 0.1);
+
+  /* Bloques semánticos */
+  --callout-def: #eaf6fc;
+  --callout-thm: #fff8db;
+  --callout-ex: #edf8f2;
+  --callout-warn: #fdf1e6;
+
+  /* Visualización (lo leen Three.js y Plotly en tiempo de ejecución) */
+  --viz-bg: #fbfbfe;
+  --viz-paper: #ffffff;
+  --viz-grid: #c9cbe0;
+  --viz-grid-strong: #8e8fae;
+  --viz-axis: #3c3a5c;
+  --viz-text: #1a1733;
+  --viz-series-1: #0072b2; /* azul */
+  --viz-series-2: #d55e00; /* bermellón */
+  --viz-series-3: #009e73; /* verde azulado */
+  --viz-series-4: #a9508a; /* púrpura rojizo (Okabe–Ito #CC79A7 oscurecido: 4.8:1) */
+  --viz-series-5: #9a6700; /* naranja (Okabe–Ito #E69F00 oscurecido: 4.7:1) */
+  --viz-pole: #d55e00;
+  --viz-zero: #0072b2;
+  --viz-unstable: #c0122c;
+  --viz-stable-region: #009e73;
+  --viz-accent: #b8860b; /* círculo unitario (amarillo IUB oscurecido para fondo claro) */
+}
+
+/* ── Tema oscuro ── */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #121023;
+  --color-surface: #1a1732;
+  --color-surface-2: #221e3f;
+  --color-border: #34305a;
+  --color-text: #f2f1fa;
+  --color-text-muted: #b9b6d3;
+  --color-primary: #4fc6f0;
+  --color-primary-strong: #86d9f5;
+  --color-on-primary: #121023;
+  --color-accent-ink: #ffdf2d;
+  --color-success: #5fd39b;
+  --color-warning: #f2b066;
+  --color-danger: #ff7a85;
+  --color-focus: #ffdf2d;
+  --color-header-bg: #0b0a16;
+  --color-header-text: #ffffff;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+
+  --callout-def: #14243a;
+  --callout-thm: #2a2614;
+  --callout-ex: #132a22;
+  --callout-warn: #2e2116;
+
+  --viz-bg: #0f0d1f;
+  --viz-paper: #1a1732;
+  --viz-grid: #2f2b52;
+  --viz-grid-strong: #5a5688;
+  --viz-axis: #c9c6e6;
+  --viz-text: #f2f1fa;
+  --viz-series-1: #56b4e9;
+  --viz-series-2: #e69f00;
+  --viz-series-3: #2ec4a0;
+  --viz-series-4: #e08ac0;
+  --viz-series-5: #f0e442;
+  --viz-pole: #ff8c42;
+  --viz-zero: #56b4e9;
+  --viz-unstable: #ff4d6d;
+  --viz-stable-region: #2ec4a0;
+  --viz-accent: #ffdf2d;
+}
