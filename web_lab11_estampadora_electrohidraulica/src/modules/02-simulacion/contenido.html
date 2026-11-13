@@ -1,0 +1,37 @@
+<div data-viz="estampadora3D" data-preset="maquina"></div>
+
+<h2 id="uso">Controles</h2>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Acción</th>
+        <th scope="col">Panel</th>
+        <th scope="col">Teclado (foco en la escena)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Marcha, pausa</td><td>S1: marcha · Pausar o reanudar</td><td>Espacio</td></tr>
+      <tr><td>Estado inicial</td><td>Reiniciar</td><td>0</td></tr>
+      <tr><td>Paro de emergencia</td><td>S0: paro de emergencia</td><td>E</td></tr>
+      <tr><td>Rearme tras liberar S0</td><td>S2: rearme</td><td>2</td></tr>
+      <tr><td>Guarda frontal</td><td>Guarda: abrir o cerrar</td><td>G</td></tr>
+      <tr><td>Cámara</td><td>Arrastrar y rueda</td><td>Flechas, + y −, R</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="pruebas">Qué probar</h2>
+<ul>
+  <li>
+    <strong>Emergencia (E):</strong> D se detiene y A abre por muelle; B y C vuelven al origen con Y3 e Y5 forzados.
+    Libera S0 y pulsa S2.
+  </li>
+  <li>
+    <strong>Fuga, B7 sin presión:</strong> A llega a B2, el manómetro se queda en 62 bar y el ciclo se detiene en la
+    etapa 1.
+  </li>
+  <li><strong>Atasco del carro B:</strong> sin B4 no hay etapa 3; el motor D no arranca.</li>
+  <li><strong>Guarda abierta:</strong> S1 no inicia el ciclo; durante el ciclo queda enclavada.</li>
+</ul>
+<p>LED verdes: sensores. Ámbar: salidas del PLC. Azules: solenoides en la central hidráulica.</p>

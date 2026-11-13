@@ -12,6 +12,7 @@ Plataformas web interactivas de los laboratorios de la asignatura **MEC42 — Di
 | **7 — Célula de Mecanizado** | Gemelo digital 3D, diagrama de fases, teoría, actividades y rúbrica | [Abrir](https://buritica06.github.io/MEC42-Diseno-de-automatismos-de-PLC/) | [`web_lab7_celula_mecanizado/`](web_lab7_celula_mecanizado/) |
 | **8 — Alimentos Del Valle** | Simulación 3D de la estación de dosificación y corte antigoteo | [Abrir](https://buritica06.github.io/MEC42-Diseno-de-automatismos-de-PLC/lab8/) | [`web_lab8_alimentos_del_valle/`](web_lab8_alimentos_del_valle/) |
 | **Parcial II (Semana 10) — Estación de giro temporizado** | Simulación 3D de la mesa revólver (Figura 1), introducción y diagrama de fases | [Abrir](https://buritica06.github.io/MEC42-Diseno-de-automatismos-de-PLC/parcial10/) | [`web_parcial10_giro_temporizado/`](web_parcial10_giro_temporizado/) |
+| **11 — Estampadora electrohidráulica** | Figura 1 en 3D (ciclo, emergencia y fallas), introducción, diagrama de fases VDI 3260 y Gantt | [Abrir](https://buritica06.github.io/MEC42-Diseno-de-automatismos-de-PLC/lab11/) | [`web_lab11_estampadora_electrohidraulica/`](web_lab11_estampadora_electrohidraulica/) |
 
 ## Estructura
 
@@ -20,7 +21,8 @@ Plataformas web interactivas de los laboratorios de la asignatura **MEC42 — Di
 ├── .github/workflows/deploy.yml     # Prueba, compila y publica todos los sitios
 ├── web_lab7_celula_mecanizado/      # Se publica en la raíz del sitio
 ├── web_lab8_alimentos_del_valle/    # Se publica en /lab8/
-└── web_parcial10_giro_temporizado/  # Se publica en /parcial10/
+├── web_parcial10_giro_temporizado/  # Se publica en /parcial10/
+└── web_lab11_estampadora_electrohidraulica/  # Se publica en /lab11/
 ```
 
 Cada carpeta es un proyecto independiente, con sus propias dependencias.

@@ -1,0 +1,68 @@
+<p>
+  La máquina estampa piezas de acero en tres tiempos: las <strong>sujeta</strong> con alta presión, las
+  <strong>traslada</strong> bajo un troquel accionado por un motor hidráulico con volante excéntrico y las
+  <strong>expulsa</strong> de la matriz. Un PLC S7-1200 coordina la secuencia con siete sensores y seis solenoides a
+  24 V DC.
+</p>
+
+<div class="dato-grid">
+  <div class="dato"><strong>100 bar</strong><span>Sujeción (cilindro A)</span></div>
+  <div class="dato"><strong>40 bar</strong><span>Movimiento (B, C y D)</span></div>
+  <div class="dato"><strong>3 s</strong><span>Estampado (t1)</span></div>
+  <div class="dato"><strong>8 + 3</strong><span>Etapas GP + GS</span></div>
+</div>
+
+<h2 id="subsistemas">Subsistemas</h2>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Actuador</th>
+        <th scope="col">Función</th>
+        <th scope="col">Válvula</th>
+        <th scope="col">Sensores</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>A</strong> · cilindro</td>
+        <td>Mordaza sobre el carro</td>
+        <td>4/2 monoestable (Y1)</td>
+        <td>B1, B2 y presostato B7</td>
+      </tr>
+      <tr>
+        <td><strong>B</strong> · cilindro</td>
+        <td>Carro: carga ↔ troquel</td>
+        <td>4/3 centro cerrado (Y2, Y3)</td>
+        <td>B3, B4</td>
+      </tr>
+      <tr>
+        <td><strong>C</strong> · cilindro</td>
+        <td>Expulsor vertical en el foso</td>
+        <td>4/2 biestable (Y4, Y5)</td>
+        <td>B5, B6</td>
+      </tr>
+      <tr>
+        <td><strong>D</strong> · motor</td>
+        <td>Volante excéntrico y troquel</td>
+        <td>3/2 monoestable (Y6)</td>
+        <td>Temporizador t1</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="callout callout--thm" role="note">
+  <span class="callout__title">Idea clave</span>
+  <p>
+    Posición no es fuerza: el carro solo avanza con \(B2 \cdot B7\). El final de carrera confirma dónde está el
+    vástago; el presostato, que la pieza está apretada (&gt; 85 bar).
+  </p>
+</div>
+
+<h2 id="recorrido">Recorrido</h2>
+<ol>
+  <li><a href="#/capitulo/02-simulacion">Simulación 3D</a>: el ciclo completo, la emergencia y dos fallas.</li>
+  <li><a href="#/capitulo/03-fases">Diagrama de fases</a>: qué señal provoca cada movimiento.</li>
+  <li><a href="#/capitulo/04-gantt">Diagrama de Gantt</a>: plan del taller y tiempos del ciclo.</li>
+</ol>
