@@ -1,0 +1,34 @@
+<div data-viz="manipulador3D" data-preset="maquina"></div>
+
+<h2 id="uso">Controles</h2>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Acción</th>
+        <th scope="col">Panel</th>
+        <th scope="col">Teclado (foco en la escena)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Marcha / pausa</td><td>S_START · Pausar o reanudar</td><td>Espacio</td></tr>
+      <tr><td>Parada a fin de ciclo</td><td>S_STOP</td><td>S</td></tr>
+      <tr><td>Emergencia</td><td>S_EMG: enclavar / desenclavar</td><td>E</td></tr>
+      <tr><td>Reposición</td><td>S_RESET</td><td>X</td></tr>
+      <tr><td>Estado inicial</td><td>Reiniciar simulación</td><td>0</td></tr>
+      <tr><td>Cámara</td><td>Arrastrar y rueda</td><td>Flechas, + y −, R</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="pruebas">Qué probar</h2>
+<ul>
+  <li>
+    <strong>Emergencia durante el giro (E):</strong> la pieza cae, A, B y C vuelven por presión residual y D se queda a
+    medio camino. Desenclava, pulsa S_RESET y observa el retorno lento de D a S3.
+  </li>
+  <li><strong>Sin suministro:</strong> la máquina termina el ciclo doble y se detiene en posición inicial.</li>
+  <li><strong>Lote N = 2:</strong> tras dos ciclos dobles se enciende H3; S_RESET en reposo pone C1 a cero.</li>
+  <li><strong>Sensor B2 averiado:</strong> la etapa 1 supera 5 s, GS pasa a 20 y H3 parpadea.</li>
+</ul>
+<p>LED verdes: sensores. Ámbar: bobinas Y1–Y7. Azules: aire Y8 e Y9. Columna: H1 verde, H2 azul, H3 blanco, H0 rojo.</p>

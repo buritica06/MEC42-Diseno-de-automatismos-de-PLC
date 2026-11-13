@@ -1,0 +1,57 @@
+<p>
+  El manipulador toma piezas cilíndricas de la <strong>canaleta 1</strong> y las reparte de forma alternada en las
+  <strong>canaletas 2 y 3</strong>. Cada <em>ciclo doble</em> mueve dos piezas en 12 movimientos. Un PLC S7-1200 (CPU
+  1214C DC/DC/DC) ejecuta el programa SCL del parcial: 14 entradas y 10 salidas a 24 V DC.
+</p>
+
+<div class="dato-grid">
+  <div class="dato"><strong>4 ejes</strong><span>A, B, C neumáticos · D giratorio</span></div>
+  <div class="dato"><strong>2 × 1,5 s</strong><span>Descarga temporizada (T1, T2)</span></div>
+  <div class="dato"><strong>N ciclos</strong><span>Lote con contador CTU</span></div>
+  <div class="dato"><strong>15 + 5</strong><span>Etapas GP + GS</span></div>
+</div>
+
+<h2 id="actuadores">Actuadores</h2>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Actuador</th>
+        <th scope="col">Función</th>
+        <th scope="col">Válvula</th>
+        <th scope="col">Sensores</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>A</strong> · pinza</td><td>Sujeta la pieza</td><td>5/2 monoestable (Y1)</td><td>S1, S2</td></tr>
+      <tr><td><strong>B</strong> · eje vertical</td><td>Baja a la canaleta 1</td><td>5/2 monoestable (Y2)</td><td>B1, B2</td></tr>
+      <tr><td><strong>C</strong> · eje horizontal</td><td>Elige canaleta 2 o 3</td><td>5/2 monoestable (Y3)</td><td>B3, B4</td></tr>
+      <tr><td><strong>D</strong> · giratorio</td><td>Canaleta 1 ↔ canaletas 2/3</td><td>2 × 5/2 biestables (Y4–Y7)</td><td>S3, B5</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="condiciones">Condiciones del automatismo</h2>
+<ul>
+  <li><strong>Ciclo continuo:</strong> S_START marcha; S_STOP para al terminar el ciclo doble en curso.</li>
+  <li><strong>Material:</strong> sin pieza (B_PIEZA) termina el ciclo doble y se detiene en S1 · B1 · B3 · S3.</li>
+  <li><strong>Lote:</strong> el contador C1 detiene la máquina al completar N ciclos dobles.</li>
+  <li>
+    <strong>Emergencia:</strong> KS corta las bobinas e Y9 al instante e Y8 con 1 s de retardo: A, B y C vuelven a
+    reposo y D queda sin presión. S_RESET devuelve D a S3 antes de permitir un nuevo arranque.
+  </li>
+</ul>
+
+<div class="callout callout--thm" role="note">
+  <span class="callout__title">Idea clave</span>
+  <p>
+    El muelle reposiciona la corredera de la válvula, no el vástago: A, B y C solo regresan con presión. Por eso la
+    zona A-B-C se descarga con retardo (parada categoría 1) y la zona de D al instante.
+  </p>
+</div>
+
+<h2 id="recorrido">Recorrido</h2>
+<ol>
+  <li><a href="#/capitulo/02-simulacion">Simulación 3D</a>: el ciclo doble, la emergencia y un fallo de sensor.</li>
+  <li><a href="#/capitulo/03-fases">Diagrama de fases</a>: qué señal provoca cada movimiento.</li>
+</ol>

@@ -3,6 +3,7 @@
 #   web_lab8_alimentos_del_valle  -> /lab8/
 #   web_parcial10_giro_temporizado -> /parcial10/
 #   web_lab11_estampadora_electrohidraulica -> /lab11/
+#   web_parcial14_equipo_manipulacion -> /parcial14/
 # Requisito único (una sola vez): Settings → Pages → Source: "GitHub Actions".
 name: Desplegar en GitHub Pages
 
@@ -37,6 +38,7 @@ jobs:
             web_lab8_alimentos_del_valle/package-lock.json
             web_parcial10_giro_temporizado/package-lock.json
             web_lab11_estampadora_electrohidraulica/package-lock.json
+            web_parcial14_equipo_manipulacion/package-lock.json
 
       - name: Laboratorio 7 - instalar dependencias
         working-directory: web_lab7_celula_mecanizado
@@ -86,12 +88,25 @@ jobs:
         working-directory: web_lab11_estampadora_electrohidraulica
         run: npm run build
 
-      - name: Reunir los sitios (lab 7 en la raíz, lab 8 en /lab8/, parcial 10 en /parcial10/ y lab 11 en /lab11/)
+      - name: Parcial Final 14 - instalar dependencias
+        working-directory: web_parcial14_equipo_manipulacion
+        run: npm ci
+
+      - name: Parcial Final 14 - pruebas unitarias
+        working-directory: web_parcial14_equipo_manipulacion
+        run: npm test
+
+      - name: Parcial Final 14 - compilar
+        working-directory: web_parcial14_equipo_manipulacion
+        run: npm run build
+
+      - name: Reunir los sitios (lab 7 en la raíz, lab 8, parcial 10, lab 11 y parcial 14 en subcarpetas)
         run: |
           cp -r web_lab7_celula_mecanizado/dist _site
           cp -r web_lab8_alimentos_del_valle/dist _site/lab8
           cp -r web_parcial10_giro_temporizado/dist _site/parcial10
           cp -r web_lab11_estampadora_electrohidraulica/dist _site/lab11
+          cp -r web_parcial14_equipo_manipulacion/dist _site/parcial14
 
       - name: Configurar Pages
         uses: actions/configure-pages@v5
